@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Evolução</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; }
+
+/* NAV TABS */
+.tabs { display: flex; background: #fff; border-bottom: 1px solid #e5e5e0; position: sticky; top: 0; z-index: 10; }
+.tab { flex: 1; padding: 13px 8px; font-size: 12px; font-weight: 700; text-align: center; cursor: pointer; color: #888; border-bottom: 2px solid transparent; transition: all 0.2s; }
+.tab.active { color: #3C3489; border-bottom-color: #3C3489; }
+
+/* PAGES */
+.page { display: none; padding: 1.25rem 1rem 2rem; max-width: 520px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* CARDS */
+.card { background: #fff; border-radius: 14px; border: 1px solid #e5e5e0; padding: 1.1rem 1.2rem; margin-bottom: 1rem; }
+.card-title { font-size: 15px; font-weight: 700; margin-bottom: .8rem; display: flex; align-items: center; gap: 8px; }
+.card-title span { font-size: 18px; }
+
+/* WALLPAPERS */
+.wallpaper { width: 100%; border-radius: 16px; overflow: hidden; margin-bottom: 1rem; position: relative; }
+.wp-inner { padding: 2rem 1.5rem; min-height: 320px; display: flex; flex-direction: column; justify-content: space-between; }
+.wp-3m { background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
+.wp-6m { background: linear-gradient(145deg, #0d1b2a 0%, #1b4332 50%, #2d6a4f 100%); }
+.wp-12m { background: linear-gradient(145deg, #2d1b69 0%, #553c9a 50%, #7b2d8b 100%); }
+.wp-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.wp-period { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: 0.7; color: #fff; }
+.wp-icon { font-size: 28px; }
+.wp-main { text-align: center; padding: 1rem 0; }
+.wp-title { font-size: 22px; font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 6px; }
+.wp-subtitle { font-size: 12px; color: rgba(255,255,255,0.65); }
+.wp-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.wp-metric { background: rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 6px; text-align: center; backdrop-filter: blur(4px); }
+.wp-metric-val { font-size: 14px; font-weight: 800; color: #fff; }
+.wp-metric-lbl { font-size: 9px; color: rgba(255,255,255,0.6); margin-top: 2px; text-transform: uppercase; letter-spacing: .04em; }
+.wp-quote { font-size: 11px; color: rgba(255,255,255,0.5); text-align: center; font-style: italic; margin-top: .5rem; }
+.wp-date { font-size: 10px; color: rgba(255,255,255,0.4); text-align: right; margin-top: .5rem; }
+.download-btn { width: 100%; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 6px; }
+.btn-3m { background: #0f3460; color: #fff; }
+.btn-6m { background: #1b4332; color: #fff; }
+.btn-12m { background: #553c9a; color: #fff; }
+
+/* PROJEÇÕES */
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-item { display: flex; gap: 12px; }
+.tl-left { display: flex; flex-direction: column; align-items: center; width: 36px; flex-shrink: 0; }
+.tl-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.dot-now { background: #E1F5EE; }
+.dot-3m { background: #E6F1FB; }
+.dot-6m { background: #E1F5EE; }
+.dot-12m { background: #EEEDFE; }
+.tl-line { width: 2px; background: #ebebeb; flex: 1; min-height: 16px; margin: 2px 0; }
+.tl-content { padding: 0 0 1.5rem; flex: 1; }
+.tl-period { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.tl-period.now { color: #0F6E56; }
+.tl-period.m3 { color: #185FA5; }
+.tl-period.m6 { color: #0F6E56; }
+.tl-period.m12 { color: #3C3489; }
+.tl-desc { font-size: 12px; color: #666; margin-bottom: 8px; line-height: 1.5; }
+.metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.metric-chip { padding: 6px 10px; border-radius: 8px; }
+.chip-3m { background: #E6F1FB; }
+.chip-6m { background: #E1F5EE; }
+.chip-12m { background: #EEEDFE; }
+.chip-now { background: #f0f0ec; }
+.metric-name { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .04em; }
+.metric-val { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+.metric-delta { font-size: 10px; color: #0F6E56; font-weight: 600; }
+.metric-delta.neg { color: #993C1D; }
+
+/* TRACKER */
+.tracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.tracker-header h2 { font-size: 16px; font-weight: 700; }
+.add-btn { padding: 7px 14px; background: #3C3489; color: #fff; border: none; border-radius: 999px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.progress-item { margin-bottom: 1rem; }
+.progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.progress-label { font-size: 13px; font-weight: 600; }
+.progress-vals { font-size: 12px; color: #666; }
+.progress-vals .current { font-weight: 700; color: #3C3489; }
+.progress-bar-bg { background: #f0f0ec; border-radius: 999px; height: 8px; overflow: hidden; }
+.progress-bar { height: 8px; border-radius: 999px; transition: width 0.5s ease; }
+.bar-cintura { background: linear-gradient(90deg, #E24B4A, #FA7B6E); }
+.bar-abdomen { background: linear-gradient(90deg, #E24B4A, #FA7B6E); }
+.bar-peito { background: linear-gradient(90deg, #185FA5, #378ADD); }
+.bar-braco { background: linear-gradient(90deg, #3C3489, #7F77DD); }
+.bar-coxa { background: linear-gradient(90deg, #0F6E56, #1D9E75); }
+.progress-note { font-size: 10px; color: #aaa; margin-top: 3px; }
+
+.chart-section { margin-top: 1rem; }
+.chart-title { font-size: 13px; font-weight: 700; margin-bottom: .5rem; color: #555; }
+.mini-chart { display: flex; align-items: flex-end; gap: 6px; height: 60px; padding: 0 4px; }
+.bar-col { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+.bar-col-bar { width: 100%; border-radius: 4px 4px 0 0; transition: height 0.4s; }
+.bar-col-label { font-size: 9px; color: #aaa; }
+
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: flex-end; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: #fff; border-radius: 20px 20px 0 0; padding: 1.5rem 1rem 2rem; width: 100%; max-width: 520px; }
+.modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 1rem; }
+.input-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+.input-label { font-size: 12px; color: #666; width: 120px; flex-shrink: 0; }
+.input-field { flex: 1; padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; }
+.modal-btns { display: flex; gap: 8px; margin-top: 1rem; }
+.modal-btns button { flex: 1; padding: 12px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; }
+.btn-cancel { background: #f0f0ec; color: #555; }
+.btn-save { background: #3C3489; color: #fff; }
+
+.history-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0ec; }
+.history-date { font-size: 12px; color: #888; }
+.history-vals { font-size: 12px; font-weight: 600; text-align: right; }
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('wallpapers')">🎯 Wallpapers</div>
+  <div class="tab" onclick="showTab('projecoes')">📈 Projeções</div>
+  <div class="tab" onclick="showTab('tracker')">📊 Tracker</div>
+</div>
+
+<!-- WALLPAPERS -->
+<div class="page active" id="page-wallpapers">
+
+  <!-- 3 MESES -->
+  <div style="margin-bottom:.5rem;margin-top:.5rem">
+    <div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">3 meses — Set/2026</div>
+    <div class="wallpaper">
+      <div class="wp-inner wp-3m">
+        <div class="wp-header">
+          <div class="wp-period">3 meses · Set 2026</div>
+          <div class="wp-icon">🔥</div>
+        </div>
+        <div class="wp-main">
+          <div class="wp-title">Primeiro resultado<br>visível</div>
+          <div class="wp-subtitle">Cintura −4cm · Braços +2cm · Definição começando</div>
+        </div>
+        <div class="wp-metrics">
+          <div class="wp-metric"><div class="wp-metric-val">82cm</div><div class="wp-metric-lbl">Cintura</div></div>
+          <div class="wp-metric"><div class="wp-metric-val">37cm</div><div class="wp-metric-lbl">Braço</div></div>
+          <div class="wp-metric"><div class="wp-metric-val">63cm</div><div class="wp-metric-lbl">Coxa</div></div>
+        </div>
+        <div class="wp-quote">"A cada semana que passa, o espelho muda."</div>
+        <div class="wp-date">Iniciado em Jun/2026</div>
+      </div>
+    </div>
+    <button class="download-btn btn-3m" onclick="downloadWallpaper('3m')">⬇ Salvar wallpaper 3 meses</button>
+  </div>
+
+  <!-- 6 MESES -->
+  <div style="margin-bottom:.5rem;margin-top:1.5rem">
+    <div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">6 meses — Dez/2026</div>
+    <div class="wallpaper">
+      <div class="wp-inner wp-6m">
+        <div class="wp-header">
+          <div class="wp-period">6 meses · Dez 2026</div>
+          <div class="wp-icon">💪</div>
+        </div>
+        <div class="wp-main">
+          <div class="wp-title">Transformação<br>real e visível</div>
+          <div class="wp-subtitle">Cintura −7cm · Braços +3.5cm · Glúteo e costas definidos</div>
+        </div>
+        <div class="wp-metrics">
+          <div class="wp-metric"><div class="wp-metric-val">79cm</div><div class="wp-metric-lbl">Cintura</div></div>
+          <div class="wp-metric"><div class="wp-metric-val">38.5cm</div><div class="wp-metric-lbl">Braço</div></div>
+          <div class="wp-metric"><div class="wp-metric-val">65cm</div><div class="wp-metric-lbl">Coxa</div></div>
+        </div>
+        <div class="wp-quote">"Metade do caminho. O melhor ainda vem."</div>
+        <div class="wp-date">Iniciado em Jun/2026</div>
+      </div>
+    </div>
+    <button class="download-btn btn-6m" onclick="downloadWallpaper('6m')">⬇ Salvar wallpaper 6 meses</button>
+  </div>
+
+  <!-- 12 MESES -->
+  <div style="margin-bottom:.5rem;margin-top:1.5rem">
+    <div style="font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">12 meses — Jun/2027</div>
+    <div class="wallpaper">
+      <div class="wp-inner wp-12m">
+        <div class="wp-header">
+          <div class="wp-period">12 meses · Jun 2027</div>
+          <div class="wp-icon">🏆</div>
+        </div>
+        <div class="wp-main">
+          <div class="wp-title">1 ano de<br>consistência</div>
+          <div class="wp-subtitle">Cintura −10cm · Braços +5cm · Físico completamente diferente</div>
+        </div>
+        <div class="wp-metrics">
+          <div class="wp-metric"><div class="wp-metric-val">76cm</div><div class="wp-metric-lbl">Cintura</div></div>
+          <div class="wp-metric"><div class="wp-metric-val">40cm</div><div class="wp-metric-lbl">Braço</div></div>
+          <div class="wp-metric"><div class="wp-metric-val">67cm</div><div class="wp-metric-lbl">Coxa</div></div>
+        </div>
+        <div class="wp-quote">"365 dias de escolhas certas. Valeu cada uma."</div>
+        <div class="wp-date">Iniciado em Jun/2026</div>
+      </div>
+    </div>
+    <button class="download-btn btn-12m" onclick="downloadWallpaper('12m')">⬇ Salvar wallpaper 12 meses</button>
+  </div>
+</div>
+
+<!-- PROJEÇÕES -->
+<div class="page" id="page-projecoes">
+  <div style="padding-top:.5rem">
+
+  <div class="card" style="margin-bottom:1rem">
+    <div style="font-size:12px;color:#666;line-height:1.6">
+      Projeções baseadas nas suas medidas de <strong>03/05/2026</strong>, 5x/semana de treino, whey + creatina, e alimentação controlada. Valores são estimativas realistas — não mágica.
+    </div>
+  </div>
+
+  <div class="timeline">
+
+    <!-- AGORA -->
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot dot-now">📍</div><div class="tl-line"></div></div>
+      <div class="tl-content">
+        <div class="tl-period now">Hoje — Jun/2026</div>
+        <div class="tl-desc">Ponto de partida. 2 meses de treino, 12kg perdidos. Base sólida construída.</div>
+        <div class="metrics-grid">
+          <div class="metric-chip chip-now"><div class="metric-name">Cintura</div><div class="metric-val">86.5 cm</div></div>
+          <div class="metric-chip chip-now"><div class="metric-name">Abdômen</div><div class="metric-val">95.5 cm</div></div>
+          <div class="metric-chip chip-now"><div class="metric-name">Braço (cont.)</div><div class="metric-val">35.5 cm</div></div>
+          <div class="metric-chip chip-now"><div class="metric-name">Coxa</div><div class="metric-val">59 cm</div></div>
+          <div class="metric-chip chip-now"><div class="metric-name">Peito</div><div class="metric-val">102.5 cm</div></div>
+          <div class="metric-chip chip-now"><div class="metric-name">Quadril</div><div class="metric-val">107.5 cm</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 MESES -->
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot dot-3m">🔥</div><div class="tl-line"></div></div>
+      <div class="tl-content">
+        <div class="tl-period m3">3 meses — Set/2026</div>
+        <div class="tl-desc">Primeira mudança visível no espelho. Cintura mais fina, ombros mais largos, braços com mais volume. Glúteo começando a responder.</div>
+        <div class="metrics-grid">
+          <div class="metric-chip chip-3m"><div class="metric-name">Cintura</div><div class="metric-val">82–83 cm <span class="metric-delta neg">−4cm</span></div></div>
+          <div class="metric-chip chip-3m"><div class="metric-name">Abdômen</div><div class="metric-val">91–92 cm <span class="metric-delta neg">−4cm</span></div></div>
+          <div class="metric-chip chip-3m"><div class="metric-name">Braço (cont.)</div><div class="metric-val">37–38 cm <span class="metric-delta">+2cm</span></div></div>
+          <div class="metric-chip chip-3m"><div class="metric-name">Coxa</div><div class="metric-val">62–63 cm <span class="metric-delta">+3cm</span></div></div>
+          <div class="metric-chip chip-3m"><div class="metric-name">Peito</div><div class="metric-val">104–106 cm <span class="metric-delta">+3cm</span></div></div>
+          <div class="metric-chip chip-3m"><div class="metric-name">Quadril</div><div class="metric-val">105 cm <span class="metric-delta neg">−2cm</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 MESES -->
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot dot-6m">💪</div><div class="tl-line"></div></div>
+      <div class="tl-content">
+        <div class="tl-period m6">6 meses — Dez/2026</div>
+        <div class="tl-desc">Transformação que todo mundo nota. Costas em V visível, braços com definição, abdômen mais plano. Glúteo e coxa bem mais desenvolvidos.</div>
+        <div class="metrics-grid">
+          <div class="metric-chip chip-6m"><div class="metric-name">Cintura</div><div class="metric-val">79–80 cm <span class="metric-delta neg">−7cm</span></div></div>
+          <div class="metric-chip chip-6m"><div class="metric-name">Abdômen</div><div class="metric-val">88–89 cm <span class="metric-delta neg">−7cm</span></div></div>
+          <div class="metric-chip chip-6m"><div class="metric-name">Braço (cont.)</div><div class="metric-val">38.5–39 cm <span class="metric-delta">+3.5cm</span></div></div>
+          <div class="metric-chip chip-6m"><div class="metric-name">Coxa</div><div class="metric-val">64–65 cm <span class="metric-delta">+5cm</span></div></div>
+          <div class="metric-chip chip-6m"><div class="metric-name">Peito</div><div class="metric-val">106–108 cm <span class="metric-delta">+5cm</span></div></div>
+          <div class="metric-chip chip-6m"><div class="metric-name">Quadril</div><div class="metric-val">103–104 cm <span class="metric-delta neg">−4cm</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 MESES -->
+    <div class="tl-item">
+      <div class="tl-left"><div class="tl-dot dot-12m">🏆</div></div>
+      <div class="tl-content">
+        <div class="tl-period m12">12 meses — Jun/2027</div>
+        <div class="tl-desc">Físico completamente diferente de hoje. Relação cintura/quadril inversa (ombros dominando). Braços com volume real, pernas proporcionais. O que você quer ser.</div>
+        <div class="metrics-grid">
+          <div class="metric-chip chip-12m"><div class="metric-name">Cintura</div><div class="metric-val">75–77 cm <span class="metric-delta neg">−10cm</span></div></div>
+          <div class="metric-chip chip-12m"><div class="metric-name">Abdômen</div><div class="metric-val">85–87 cm <span class="metric-delta neg">−10cm</span></div></div>
+          <div class="metric-chip chip-12m"><div class="metric-name">Braço (cont.)</div><div class="metric-val">40–41 cm <span class="metric-delta">+5cm</span></div></div>
+          <div class="metric-chip chip-12m"><div class="metric-name">Coxa</div><div class="metric-val">66–68 cm <span class="metric-delta">+7cm</span></div></div>
+          <div class="metric-chip chip-12m"><div class="metric-name">Peito</div><div class="metric-val">108–111 cm <span class="metric-delta">+8cm</span></div></div>
+          <div class="metric-chip chip-12m"><div class="metric-name">Quadril</div><div class="metric-val">101–102 cm <span class="metric-delta neg">−6cm</span></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+</div>
+
+<!-- TRACKER -->
+<div class="page" id="page-tracker">
+  <div style="padding-top:.5rem">
+  <div class="tracker-header">
+    <h2>Tracker de Medidas</h2>
+    <button class="add-btn" onclick="openModal()">+ Atualizar</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📏</span> Progresso atual</div>
+    <div id="progress-bars"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>📅</span> Histórico de medições</div>
+    <div id="history-list"></div>
+  </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3>Nova medição</h3>
+    <div class="input-row"><span class="input-label">Data</span><input class="input-field" type="date" id="inp-data"></div>
+    <div class="input-row"><span class="input-label">Cintura (cm)</span><input class="input-field" type="number" step="0.1" id="inp-cintura" placeholder="ex: 84.0"></div>
+    <div class="input-row"><span class="input-label">Abdômen (cm)</span><input class="input-field" type="number" step="0.1" id="inp-abdomen" placeholder="ex: 93.0"></div>
+    <div class="input-row"><span class="input-label">Braço cont. (cm)</span><input class="input-field" type="number" step="0.1" id="inp-braco" placeholder="ex: 36.5"></div>
+    <div class="input-row"><span class="input-label">Coxa (cm)</span><input class="input-field" type="number" step="0.1" id="inp-coxa" placeholder="ex: 61.0"></div>
+    <div class="input-row"><span class="input-label">Peso (kg)</span><input class="input-field" type="number" step="0.1" id="inp-peso" placeholder="ex: 88.0"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveEntry()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Initial data
+const baseline = { data: '2026-05-03', cintura: 86.5, abdomen: 95.5, braco: 35.5, coxa: 59, peso: null };
+const goals = { '3m': { cintura: 82, abdomen: 91, braco: 37.5, coxa: 62.5 }, '6m': { cintura: 79.5, abdomen: 88.5, braco: 38.75, coxa: 64.5 }, '12m': { cintura: 76, abdomen: 86, braco: 40.5, coxa: 67 } };
+
+let entries = JSON.parse(localStorage.getItem('treino_entries') || '[]');
+if (entries.length === 0) entries = [baseline];
+
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['wallpapers','projecoes','tracker'][i]===id));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if (id==='tracker') renderTracker();
+}
+
+function latest() { return entries[entries.length-1]; }
+
+function renderTracker() {
+  const l = latest();
+  const bars = [
+    { key:'cintura', label:'Cintura', cur:l.cintura, start:86.5, goal:76, dir:'down', unit:'cm' },
+    { key:'abdomen', label:'Abdômen', cur:l.abdomen, start:95.5, goal:86, dir:'down', unit:'cm' },
+    { key:'braco', label:'Braço (contraído)', cur:l.braco, start:35.5, goal:40.5, dir:'up', unit:'cm' },
+    { key:'coxa', label:'Coxa', cur:l.coxa, start:59, goal:67, dir:'up', unit:'cm' },
+  ];
+  document.getElementById('progress-bars').innerHTML = bars.map(b => {
+    let pct, delta, deltaStr;
+    if (b.dir==='down') {
+      const total = b.start - b.goal;
+      const done = b.start - b.cur;
+      pct = Math.min(100, Math.max(0, Math.round(done/total*100)));
+      delta = b.cur - b.start;
+      deltaStr = (delta <= 0 ? '' : '+') + delta.toFixed(1) + ' cm';
+    } else {
+      const total = b.goal - b.start;
+      const done = b.cur - b.start;
+      pct = Math.min(100, Math.max(0, Math.round(done/total*100)));
+      delta = b.cur - b.start;
+      deltaStr = (delta >= 0 ? '+' : '') + delta.toFixed(1) + ' cm';
+    }
+    const color = b.dir==='down' ? '#E24B4A' : (b.key==='braco'?'#534AB7':'#1D9E75');
+    return `
+      <div class="progress-item">
+        <div class="progress-header">
+          <span class="progress-label">${b.label}</span>
+          <span class="progress-vals"><span class="current">${b.cur} cm</span> → meta: ${b.goal} cm</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar" style="width:${pct}%;background:${color}"></div>
+        </div>
+        <div class="progress-note">${pct}% do caminho · ${deltaStr} desde o início</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('history-list').innerHTML = [...entries].reverse().map(e => `
+    <div class="history-item">
+      <span class="history-date">${formatDate(e.data)}</span>
+      <span class="history-vals">Cin: ${e.cintura}cm · Bra: ${e.braco}cm · Coxa: ${e.coxa}cm${e.peso?(' · '+e.peso+'kg'):''}</span>
+    </div>`).join('') || '<div style="font-size:13px;color:#aaa;text-align:center;padding:1rem">Nenhuma medição ainda</div>';
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+function openModal() {
+  document.getElementById('inp-data').value = new Date().toISOString().split('T')[0];
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+function saveEntry() {
+  const entry = {
+    data: document.getElementById('inp-data').value,
+    cintura: parseFloat(document.getElementById('inp-cintura').value) || latest().cintura,
+    abdomen: parseFloat(document.getElementById('inp-abdomen').value) || latest().abdomen,
+    braco: parseFloat(document.getElementById('inp-braco').value) || latest().braco,
+    coxa: parseFloat(document.getElementById('inp-coxa').value) || latest().coxa,
+    peso: parseFloat(document.getElementById('inp-peso').value) || null,
+  };
+  entries.push(entry);
+  localStorage.setItem('treino_entries', JSON.stringify(entries));
+  closeModal();
+  renderTracker();
+}
+
+function downloadWallpaper(period) {
+  const labels = { '3m':'3meses_set2026', '6m':'6meses_dez2026', '12m':'12meses_jun2027' };
+  const colors = { '3m':['#1a1a2e','#0f3460'], '6m':['#0d1b2a','#2d6a4f'], '12m':['#2d1b69','#7b2d8b'] };
+  const data = {
+    '3m': { period:'3 meses · Set 2026', icon:'🔥', title:'Primeiro resultado visível', sub:'Cintura −4cm · Braços +2cm', m1:'82cm', l1:'Cintura', m2:'37cm', l2:'Braço', m3:'63cm', l3:'Coxa', quote:'"A cada semana, o espelho muda."' },
+    '6m': { period:'6 meses · Dez 2026', icon:'💪', title:'Transformação real e visível', sub:'Cintura −7cm · Braços +3.5cm', m1:'79cm', l1:'Cintura', m2:'38.5cm', l2:'Braço', m3:'65cm', l3:'Coxa', quote:'"Metade do caminho. O melhor ainda vem."' },
+    '12m': { period:'12 meses · Jun 2027', icon:'🏆', title:'1 ano de consistência', sub:'Cintura −10cm · Braços +5cm', m1:'76cm', l1:'Cintura', m2:'40cm', l2:'Braço', m3:'67cm', l3:'Coxa', quote:'"365 dias de escolhas certas."' },
+  };
+  const d = data[period];
+  const c = colors[period];
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080; canvas.height = 1920;
+  const ctx = canvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,1080,1920);
+  grad.addColorStop(0, c[0]); grad.addColorStop(1, c[1]);
+  ctx.fillStyle = grad; ctx.fillRect(0,0,1080,1920);
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.beginPath(); ctx.arc(900,300,400,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.04)'; ctx.beginPath(); ctx.arc(150,1600,300,0,Math.PI*2); ctx.fill();
+  ctx.textAlign = 'center';
+  ctx.font = '52px -apple-system, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillText(d.period, 540, 260);
+  ctx.font = 'bold 120px -apple-system, sans-serif'; ctx.fillStyle = '#fff';
+  const lines = d.title.split(' e ');
+  if (d.title.includes('\n') || d.title.length > 18) {
+    const words = d.title.split(' ');
+    const mid = Math.ceil(words.length/2);
+    ctx.fillText(words.slice(0,mid).join(' '), 540, 820);
+    ctx.fillText(words.slice(mid).join(' '), 540, 960);
+  } else {
+    ctx.fillText(d.title, 540, 900);
+  }
+  ctx.font = '52px -apple-system, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fillText(d.sub, 540, 1060);
+  const mx = [200, 540, 880];
+  [[d.m1,d.l1],[d.m2,d.l2],[d.m3,d.l3]].forEach(([val,lbl],i) => {
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    roundRect(ctx, mx[i]-120, 1160, 240, 160, 20);
+    ctx.fill();
+    ctx.font = 'bold 72px -apple-system, sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText(val, mx[i], 1265);
+    ctx.font = '40px -apple-system, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.fillText(lbl, mx[i], 1305);
+  });
+  ctx.font = 'italic 48px -apple-system, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fillText(d.quote, 540, 1500);
+  ctx.font = '40px -apple-system, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillText('Iniciado Jun/2026', 540, 1820);
+  const link = document.createElement('a');
+  link.download = 'wallpaper_'+labels[period]+'.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+  ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r); ctx.lineTo(x+r,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r,r); ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r); ctx.closePath();
+}
+
+renderTracker();
+</script>
+</body>
+</html>
