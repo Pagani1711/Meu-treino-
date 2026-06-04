@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotina de Treino v2</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; }
+.app { max-width: 520px; margin: 0 auto; padding: 1.25rem 1rem 2rem; }
+h1 { font-size: 19px; font-weight: 700; margin-bottom: 3px; }
+.subtitle { font-size: 13px; color: #666; margin-bottom: 1.25rem; }
+.nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.day-btn { padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1px solid #ccc; background: #fff; color: #555; cursor: pointer; transition: all 0.15s; }
+.day-btn:hover { background: #f0f0f0; }
+.day-btn.active { background: #3C3489; border-color: #3C3489; color: #fff; }
+.day-btn.rest { opacity: 0.4; cursor: default; border-style: dashed; }
+.card { background: #fff; border-radius: 14px; border: 1px solid #e5e5e0; padding: 1.1rem 1.2rem; margin-bottom: 1rem; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3px; }
+.card-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.badge { font-size: 11px; padding: 2px 9px; border-radius: 999px; font-weight: 700; }
+.bp { background: #EEEDFE; color: #3C3489; }
+.bl { background: #E1F5EE; color: #0F6E56; }
+.bg { background: #FAECE7; color: #993C1D; }
+.bs { background: #E6F1FB; color: #185FA5; }
+.bfull { background: #FAEEDA; color: #854F0B; }
+.time-tag { font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 700; background: #E1F5EE; color: #0F6E56; white-space: nowrap; }
+.time-tag.long { background: #E6F1FB; color: #185FA5; }
+.card-sub { font-size: 12px; color: #888; margin-bottom: .9rem; }
+.alert { margin-bottom: .9rem; padding: 9px 12px; border-radius: 8px; border-left: 3px solid #E24B4A; background: #FCEBEB; }
+.alert-title { font-size: 11px; font-weight: 700; color: #A32D2D; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .04em; }
+.alert p { font-size: 12px; color: #A32D2D; }
+.section-sep { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: .06em; margin: 1rem 0 6px; padding-bottom: 4px; border-bottom: 1px solid #ebebeb; }
+.ex-list { display: flex; flex-direction: column; gap: 8px; }
+.ex { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 9px 11px; border-radius: 9px; background: #f8f8f5; border: 1px solid #ebebeb; }
+.ex.glute { border-left: 3px solid #993C1D; }
+.ex-name { font-size: 13px; font-weight: 600; }
+.ex-note { font-size: 11px; color: #777; margin-top: 2px; }
+.ex-chip { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 999px; margin-top: 3px; font-weight: 600; background: #EEEDFE; color: #3C3489; }
+.ex-chip.glute-chip { background: #FAECE7; color: #993C1D; }
+.ex-sets { text-align: right; white-space: nowrap; }
+.ex-num { font-size: 13px; font-weight: 700; color: #534AB7; }
+.ex-lbl { font-size: 10px; color: #aaa; }
+.tips { margin-top: 1rem; padding: 10px 12px; border-radius: 9px; background: #f8f8f5; border-left: 3px solid #534AB7; }
+.tips-title { font-size: 11px; font-weight: 700; color: #534AB7; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+.tips ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.tips li { font-size: 12px; color: #555; padding-left: 13px; position: relative; }
+.tips li::before { content: '→'; position: absolute; left: 0; color: #534AB7; }
+.rest-box { padding: 1.5rem; text-align: center; }
+.rest-txt { font-size: 15px; color: #666; }
+.rest-sub { font-size: 12px; color: #999; margin-top: 5px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: .5rem; }
+.stat { padding: 10px; background: #fff; border-radius: 10px; border: 1px solid #e5e5e0; text-align: center; }
+.stat-n { font-size: 17px; font-weight: 700; }
+.stat-l { font-size: 10px; color: #888; margin-top: 2px; }
+.version-tag { display: inline-block; font-size: 10px; background: #FAEEDA; color: #854F0B; padding: 2px 8px; border-radius: 999px; font-weight: 700; margin-left: 6px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Rotina de treino <span class="version-tag">v2</span></h1>
+  <p class="subtitle">5x/semana · Máquinas · Lombar protegida · Glúteo incluído</p>
+  <div class="nav" id="nav"></div>
+  <div id="content"></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n">≤45'</div><div class="stat-l">Dias de semana</div></div>
+    <div class="stat"><div class="stat-n">~70'</div><div class="stat-l">Domingo full body</div></div>
+    <div class="stat"><div class="stat-n">2x</div><div class="stat-l">Pernas/semana</div></div>
+  </div>
+</div>
+<script>
+const days = [
+  { label: 'Seg', rest: true },
+  { label: 'Ter', title: 'Pernas', badge: 'bg', bl: 'Legs', time: '~45min',
+    ex: [
+      { n: 'Leg press 45°', o: 'Principal — carga progressiva', s: '5x', r: '10–12', g: false },
+      { n: 'Cadeira extensora', o: 'Quadríceps isolado', s: '4x', r: '12–15', g: false },
+      { n: 'Cadeira flexora (deitado)', o: 'Posterior sem risco lombar', s: '4x', r: '12', g: false },
+      { n: 'Abdução de quadril na máquina', o: 'Glúteo médio — prioridade!', s: '4x', r: '15', g: true },
+      { n: 'Adução de quadril na máquina', o: 'Parte interna da coxa', s: '3x', r: '15', g: false },
+    ],
+    tips: ['Leg press: pés um pouco mais altos ativa mais o glúteo', 'Sem agachamento livre e sem stiff (lombar)', 'Sem panturrilha (tendão de Aquiles)']
+  },
+  { label: 'Qua', title: 'Peito + Tríceps', badge: 'bp', bl: 'Push', time: '~40min',
+    ex: [
+      { n: 'Chest press (máquina)', o: 'Ajuste de pino — sem trocar peso', s: '4x', r: '10–12', g: false },
+      { n: 'Peck deck / crucifixo máquina', o: 'Isolamento — cotovelos fixos', s: '3x', r: '12–15', g: false },
+      { n: 'Pullover na máquina', o: 'Serrátil + peitoral inferior', s: '3x', r: '12', g: false },
+      { n: 'Tríceps pulley (corda)', o: 'Cotovelos junto ao corpo', s: '3x', r: '12', g: false },
+      { n: 'Tríceps coice no cabo', o: 'Isolamento final', s: '2x', r: '12–15', g: false },
+    ],
+    tips: ['Superset peito + tríceps para caber em 40min', 'Ajuste de pino = quase sem pausa', 'Whey logo após o treino']
+  },
+  { label: 'Qui', rest: true },
+  { label: 'Sex', title: 'Ombros (pré-futebol)', badge: 'bs', bl: 'Ombros', time: '~35min',
+    alert: 'Futebol à noite — treino curto e leve. Nada de pernas ou lombar.',
+    ex: [
+      { n: 'Desenvolvimento na máquina', o: 'Sem instabilidade na lombar', s: '4x', r: '10–12', g: false },
+      { n: 'Elevação lateral na máquina', o: 'Leve — foco na técnica', s: '3x', r: '12–15', g: false },
+      { n: 'Peck deck invertido (deltóide posterior)', o: 'Equilíbrio e postura', s: '3x', r: '12–15', g: false },
+      { n: 'Encolhimento na máquina', o: 'Trapézio', s: '3x', r: '12–15', g: false },
+    ],
+    tips: ['Terminar ≥1h antes do futebol', 'Não vai ao limite de carga hoje', 'Alonga bem o tendão de Aquiles antes de jogar']
+  },
+  { label: 'Sáb', title: 'Costas + Bíceps', badge: 'bl', bl: 'Pull', time: '~45min',
+    ex: [
+      { n: 'Puxada na máquina (pegada larga)', o: 'Principal para grande dorsal', s: '4x', r: '10–12', g: false },
+      { n: 'Remada na máquina (assento)', o: 'Sem sobrecarga na lombar', s: '4x', r: '10–12', g: false },
+      { n: 'Puxada pegada neutra (triângulo)', o: 'Mais bíceps envolvido', s: '3x', r: '12', g: false },
+      { n: 'Rosca na Scott machine', o: 'Sem balanço — bíceps puro', s: '3x', r: '10–12', g: false },
+      { n: 'Rosca martelo no cabo', o: 'Volume no braço (braquial)', s: '3x', r: '12', g: false },
+    ],
+    tips: ['Dia pós-futebol — sem pernas, zero problema', 'Costas é seu ponto forte — aproveite', 'Controle a descida nas roscas (excêntrico)']
+  },
+  { label: 'Dom', title: 'Full Body + Glúteo', badge: 'bfull', bl: 'Full Body', time: '~70min', long: true,
+    sections: [
+      { title: '🍑 Glúteo — prioridade', exs: [
+        { n: 'Elevação pélvica na máquina (hip thrust)', o: 'Melhor exercício para glúteo — lombar segura', s: '4x', r: '12–15', g: true },
+        { n: 'Cadeira abdutora com inclinação pra frente', o: 'Inclina o tronco pra frente ativa mais glúteo médio', s: '4x', r: '15', g: true },
+        { n: 'Leg press com pés altos e afastados', o: 'Posição muda o foco para glúteo e posterior', s: '3x', r: '12', g: true },
+      ]},
+      { title: '💪 Complemento full body', exs: [
+        { n: 'Remada na máquina (costas)', o: 'Manter volume de costas', s: '3x', r: '12', g: false },
+        { n: 'Desenvolvimento na máquina (ombros)', o: 'Volume extra de ombros', s: '3x', r: '12', g: false },
+        { n: 'Rosca direta no cabo', o: 'Bíceps — finalizar braços', s: '3x', r: '10–12', g: false },
+        { n: 'Tríceps pulley', o: 'Fechar o treino de braços', s: '3x', r: '12', g: false },
+      ]}
+    ],
+    tips: ['Hip thrust é o exercício que mais vai mudar seu glúteo — aprenda a técnica certa', 'No leg press com pés altos: afaste os pés e deixe os joelhos abrirem para os lados', 'Domingo tem tempo — descanse bem entre as séries de glúteo (90s)']
+  },
+];
+
+let active = 1;
+function render() {
+  document.getElementById('nav').innerHTML = days.map((d,i) =>
+    `<button class="day-btn${d.rest?' rest':''}${i===active?' active':''}" onclick="${d.rest?'':('setDay('+i+')')}">${d.label}</button>`
+  ).join('');
+  const d = days[active];
+  if (d.rest) {
+    document.getElementById('content').innerHTML = `<div class="card"><div class="rest-box"><div style="font-size:28px;margin-bottom:8px">🌙</div><div class="rest-txt">Dia de descanso</div><div class="rest-sub">Caminhada leve, alongamento ou mobilidade articular</div></div></div>`;
+    return;
+  }
+
+  let exHTML = '';
+  if (d.sections) {
+    d.sections.forEach(sec => {
+      exHTML += `<div class="section-sep">${sec.title}</div><div class="ex-list">`;
+      exHTML += sec.exs.map(e => `
+        <div class="ex${e.g?' glute':''}">
+          <div>
+            <div class="ex-name">${e.n}</div>
+            <div class="ex-note">${e.o}</div>
+            <span class="ex-chip${e.g?' glute-chip':''}">${e.g?'🍑 glúteo':'máquina'}</span>
+          </div>
+          <div class="ex-sets"><div class="ex-num">${e.s} ${e.r}</div><div class="ex-lbl">séries · reps</div></div>
+        </div>`).join('');
+      exHTML += `</div>`;
+    });
+  } else {
+    const total = d.ex.reduce((a,e)=>a+parseInt(e.s),0);
+    exHTML = `<div class="card-sub">${d.ex.length} exercícios · ${total} séries · máquinas</div>`;
+    exHTML += `<div class="ex-list">${d.ex.map(e=>`
+      <div class="ex${e.g?' glute':''}">
+        <div>
+          <div class="ex-name">${e.n}</div>
+          <div class="ex-note">${e.o}</div>
+          <span class="ex-chip${e.g?' glute-chip':''}">${e.g?'🍑 glúteo':'máquina'}</span>
+        </div>
+        <div class="ex-sets"><div class="ex-num">${e.s} ${e.r}</div><div class="ex-lbl">séries · reps</div></div>
+      </div>`).join('')}</div>`;
+  }
+
+  document.getElementById('content').innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">${d.title} <span class="badge ${d.badge}">${d.bl}</span></div>
+        <span class="time-tag${d.long?' long':''}">${d.time}</span>
+      </div>
+      ${d.alert?`<div class="alert"><div class="alert-title">⚠ Atenção</div><p>${d.alert}</p></div>`:''}
+      ${exHTML}
+      <div class="tips"><div class="tips-title">💡 Dicas do dia</div><ul>${d.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+    </div>`;
+}
+function setDay(i) { active = i; render(); }
+render();
+</script>
+</body>
+</html>
