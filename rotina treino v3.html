@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotina de Treino v3</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; }
+.app { max-width: 520px; margin: 0 auto; padding: 1.25rem 1rem 2rem; }
+h1 { font-size: 19px; font-weight: 700; margin-bottom: 3px; }
+.subtitle { font-size: 13px; color: #666; margin-bottom: 1.25rem; }
+.nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.day-btn { padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1px solid #ccc; background: #fff; color: #555; cursor: pointer; transition: all 0.15s; }
+.day-btn:hover { background: #f0f0f0; }
+.day-btn.active { background: #3C3489; border-color: #3C3489; color: #fff; }
+.day-btn.rest { opacity: 0.4; cursor: default; border-style: dashed; }
+.card { background: #fff; border-radius: 14px; border: 1px solid #e5e5e0; padding: 1.1rem 1.2rem; margin-bottom: 1rem; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3px; }
+.card-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.badge { font-size: 11px; padding: 2px 9px; border-radius: 999px; font-weight: 700; }
+.bp { background: #EEEDFE; color: #3C3489; }
+.bl { background: #E1F5EE; color: #0F6E56; }
+.bg { background: #FAECE7; color: #993C1D; }
+.bs { background: #E6F1FB; color: #185FA5; }
+.bfull { background: #FAEEDA; color: #854F0B; }
+.time-tag { font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 700; background: #E1F5EE; color: #0F6E56; white-space: nowrap; }
+.time-tag.long { background: #E6F1FB; color: #185FA5; }
+.card-sub { font-size: 12px; color: #888; margin-bottom: .9rem; }
+.alert { margin-bottom: .9rem; padding: 9px 12px; border-radius: 8px; border-left: 3px solid #E8A020; background: #FEF6E7; }
+.alert-title { font-size: 11px; font-weight: 700; color: #8A5500; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .04em; }
+.alert p { font-size: 12px; color: #8A5500; }
+.section-sep { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: .06em; margin: 1rem 0 6px; padding-bottom: 4px; border-bottom: 1px solid #ebebeb; }
+.ex-list { display: flex; flex-direction: column; gap: 8px; }
+.ex { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 9px 11px; border-radius: 9px; background: #f8f8f5; border: 1px solid #ebebeb; }
+.ex.glute { border-left: 3px solid #993C1D; }
+.ex.core { border-left: 3px solid #3A6B1A; }
+.ex-name { font-size: 13px; font-weight: 600; }
+.ex-note { font-size: 11px; color: #777; margin-top: 2px; }
+.ex-chip { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 999px; margin-top: 3px; font-weight: 600; background: #EEEDFE; color: #3C3489; }
+.ex-chip.glute-chip { background: #FAECE7; color: #993C1D; }
+.ex-chip.core-chip { background: #F0F7E6; color: #3A6B1A; }
+.ex-sets { text-align: right; white-space: nowrap; }
+.ex-num { font-size: 13px; font-weight: 700; color: #534AB7; }
+.ex-lbl { font-size: 10px; color: #aaa; }
+.tips { margin-top: 1rem; padding: 10px 12px; border-radius: 9px; background: #f8f8f5; border-left: 3px solid #534AB7; }
+.tips-title { font-size: 11px; font-weight: 700; color: #534AB7; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+.tips ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.tips li { font-size: 12px; color: #555; padding-left: 13px; position: relative; }
+.tips li::before { content: '→'; position: absolute; left: 0; color: #534AB7; }
+.rest-box { padding: 1.5rem; text-align: center; }
+.rest-txt { font-size: 15px; color: #666; }
+.rest-sub { font-size: 12px; color: #999; margin-top: 5px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: .5rem; }
+.stat { padding: 10px; background: #fff; border-radius: 10px; border: 1px solid #e5e5e0; text-align: center; }
+.stat-n { font-size: 17px; font-weight: 700; }
+.stat-l { font-size: 10px; color: #888; margin-top: 2px; }
+.version-tag { display: inline-block; font-size: 10px; background: #FAEEDA; color: #854F0B; padding: 2px 8px; border-radius: 999px; font-weight: 700; margin-left: 6px; vertical-align: middle; }
+.weekly-overview { background: #fff; border-radius: 14px; border: 1px solid #e5e5e0; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+.weekly-title { font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+.week-row { display: flex; justify-content: space-between; gap: 4px; }
+.week-day { flex: 1; text-align: center; }
+.week-day-name { font-size: 10px; color: #aaa; margin-bottom: 4px; }
+.week-day-dot { width: 32px; height: 32px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.week-day-label { font-size: 9px; color: #888; margin-top: 3px; line-height: 1.2; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Rotina de treino <span class="version-tag">v3</span></h1>
+  <p class="subtitle">5x/semana · Máquinas · Core + Braços 2x/semana</p>
+
+  <div class="weekly-overview">
+    <div class="weekly-title">Visão da semana</div>
+    <div class="week-row">
+      <div class="week-day"><div class="week-day-name">Seg</div><div class="week-day-dot" style="background:#f0f0ec">😴</div><div class="week-day-label">Descanso</div></div>
+      <div class="week-day"><div class="week-day-name">Ter</div><div class="week-day-dot" style="background:#FAECE7">🦵</div><div class="week-day-label">Pernas + Core</div></div>
+      <div class="week-day"><div class="week-day-name">Qua</div><div class="week-day-dot" style="background:#EEEDFE">💪</div><div class="week-day-label">Peito + Tri + Core</div></div>
+      <div class="week-day"><div class="week-day-name">Qui</div><div class="week-day-dot" style="background:#f0f0ec">😴</div><div class="week-day-label">Descanso</div></div>
+      <div class="week-day"><div class="week-day-name">Sex</div><div class="week-day-dot" style="background:#E6F1FB">🏋️</div><div class="week-day-label">Ombros + Tri ⚽</div></div>
+      <div class="week-day"><div class="week-day-name">Sáb</div><div class="week-day-dot" style="background:#E1F5EE">🔙</div><div class="week-day-label">Costas + Bic</div></div>
+      <div class="week-day"><div class="week-day-name">Dom</div><div class="week-day-dot" style="background:#FAEEDA">🍑</div><div class="week-day-label">Full Body + Glúteo</div></div>
+    </div>
+  </div>
+
+  <div class="nav" id="nav"></div>
+  <div id="content"></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n">2x</div><div class="stat-l">Bíceps/semana</div></div>
+    <div class="stat"><div class="stat-n">2x</div><div class="stat-l">Tríceps/semana</div></div>
+    <div class="stat"><div class="stat-n">3x</div><div class="stat-l">Core/semana</div></div>
+  </div>
+</div>
+<script>
+const days = [
+  { label: 'Seg', rest: true },
+  { label: 'Ter', title: 'Pernas + Core', badge: 'bg', bl: 'Legs', time: '~50min',
+    sections: [
+      { title: '🦵 Pernas', exs: [
+        { n: 'Leg press 45°', o: 'Principal — carga progressiva', s: '5x', r: '10–12', type: 'maq' },
+        { n: 'Cadeira extensora', o: 'Quadríceps isolado', s: '4x', r: '12–15', type: 'maq' },
+        { n: 'Cadeira flexora (deitado)', o: 'Posterior sem risco lombar', s: '4x', r: '12', type: 'maq' },
+        { n: 'Abdução de quadril na máquina', o: 'Glúteo médio — prioridade!', s: '4x', r: '15', type: 'glute' },
+        { n: 'Adução de quadril na máquina', o: 'Parte interna da coxa', s: '3x', r: '15', type: 'maq' },
+      ]},
+      { title: '🔥 Core', exs: [
+        { n: 'Prancha frontal', o: 'Lombar neutra — não deixa o quadril cair', s: '3x', r: '40s', type: 'core' },
+        { n: 'Crunch no cabo (ajoelhado)', o: 'Polia alta, corda na nuca — sem lombar', s: '3x', r: '15', type: 'core' },
+      ]},
+    ],
+    tips: ['Leg press com pés altos ativa mais glúteo', 'Prancha: respira normalmente, não prende o ar', 'Sem panturrilha (tendão de Aquiles)']
+  },
+  { label: 'Qua', title: 'Peito + Tríceps + Core', badge: 'bp', bl: 'Push', time: '~55min',
+    sections: [
+      { title: '🫁 Peito', exs: [
+        { n: 'Chest press (máquina)', o: 'Base — ajuste de pino, sem trocar peso', s: '4x', r: '10–12', type: 'maq' },
+        { n: 'Supino inclinado no Smith', o: 'Parte superior do peitoral', s: '3x', r: '10–12', type: 'maq' },
+        { n: 'Supino declinado no Smith', o: 'Parte inferior do peitoral', s: '3x', r: '10–12', type: 'maq' },
+        { n: 'Peck deck / crucifixo máquina', o: 'Isolamento — sente a contração no centro', s: '3x', r: '12–15', type: 'maq' },
+        { n: 'Crossover no cabo', o: 'Finalizar peito — amplitude máxima', s: '3x', r: '12–15', type: 'maq' },
+      ]},
+      { title: '💪 Tríceps — 1º estímulo', exs: [
+        { n: 'Tríceps pulley (corda)', o: 'Cotovelos junto ao corpo — 1º estímulo semanal', s: '3x', r: '12', type: 'maq' },
+        { n: 'Tríceps coice no cabo', o: 'Isolamento — cotovelo fixo', s: '2x', r: '12–15', type: 'maq' },
+      ]},
+      { title: '🔥 Core', exs: [
+        { n: 'Crunch no cabo (ajoelhado)', o: 'Polia alta, corda na nuca', s: '3x', r: '15', type: 'core' },
+        { n: 'Prancha lateral', o: '30s cada lado — mantém o quadril alinhado', s: '2x', r: '30s', type: 'core' },
+      ]},
+    ],
+    tips: ['Superset peito + tríceps economiza tempo', 'Crossover: braços levemente dobrados, fecha o peito', 'Core no final — não pula!']
+  },
+  { label: 'Qui', rest: true },
+  { label: 'Sex', title: 'Ombros + Tríceps', badge: 'bs', bl: 'Ombros', time: '~50min',
+    alert: '⚽ Futebol às 20h — mas academia é às 5h30, então 14h de intervalo. Sem problema!',
+    sections: [
+      { title: '🏋️ Ombros', exs: [
+        { n: 'Desenvolvimento na máquina', o: 'Principal — sem instabilidade na lombar', s: '4x', r: '10–12', type: 'maq' },
+        { n: 'Elevação lateral na máquina', o: 'Deltóide medial — foco na técnica', s: '4x', r: '12–15', type: 'maq' },
+        { n: 'Peck deck invertido (deltóide posterior)', o: 'Equilíbrio muscular e postura', s: '3x', r: '12–15', type: 'maq' },
+        { n: 'Encolhimento na máquina', o: 'Trapézio superior', s: '3x', r: '12–15', type: 'maq' },
+      ]},
+      { title: '💪 Tríceps — 2º estímulo', exs: [
+        { n: 'Tríceps francês no cabo (barra reta)', o: 'Amplitude máxima — 2º estímulo semanal', s: '3x', r: '10–12', type: 'maq' },
+        { n: 'Tríceps pulley (barra V)', o: 'Variação da pegada em relação à quarta', s: '3x', r: '12', type: 'maq' },
+        { n: 'Mergulho no banco (bench dip)', o: 'Peso corporal — finalizar tríceps', s: '3x', r: '12–15', type: 'maq' },
+      ]},
+    ],
+    tips: ['2º estímulo de tríceps na semana = crescimento acelerado', 'Tríceps representa 2/3 do volume do braço', 'Alonga o tendão de Aquiles antes do futebol à noite']
+  },
+  { label: 'Sáb', title: 'Costas + Bíceps', badge: 'bl', bl: 'Pull', time: '~50min',
+    sections: [
+      { title: '🔙 Costas', exs: [
+        { n: 'Puxada na máquina (pegada larga)', o: 'Principal para grande dorsal', s: '4x', r: '10–12', type: 'maq' },
+        { n: 'Remada na máquina (assento)', o: 'Espessura de costas sem lombar', s: '4x', r: '10–12', type: 'maq' },
+        { n: 'Puxada pegada neutra (triângulo)', o: 'Variação — mais bíceps envolvido', s: '3x', r: '12', type: 'maq' },
+      ]},
+      { title: '💪 Bíceps — 1º estímulo', exs: [
+        { n: 'Rosca na Scott machine', o: 'Sem balanço — bíceps puro — 1º estímulo semanal', s: '4x', r: '10–12', type: 'maq' },
+        { n: 'Rosca martelo no cabo', o: 'Braquial — volume na parte externa do braço', s: '3x', r: '12', type: 'maq' },
+        { n: 'Rosca concentrada com halter', o: 'Isolamento máximo — pico do bíceps', s: '3x', r: '10–12', type: 'maq' },
+      ]},
+    ],
+    tips: ['Controle a descida nas roscas — fase excêntrica é ouro', 'Costas é seu ponto forte — aproveite', 'Rosca concentrada: cotovelo no joelho, sem balanço']
+  },
+  { label: 'Dom', title: 'Full Body + Glúteo', badge: 'bfull', bl: 'Full Body', time: '~75min', long: true,
+    sections: [
+      { title: '🍑 Glúteo — prioridade', exs: [
+        { n: 'Elevação pélvica (hip thrust) na máquina', o: 'Melhor exercício para glúteo — lombar segura', s: '4x', r: '12–15', type: 'glute' },
+        { n: 'Cadeira abdutora com tronco inclinado', o: 'Inclinar pra frente ativa mais glúteo médio', s: '4x', r: '15', type: 'glute' },
+        { n: 'Leg press com pés altos e afastados', o: 'Posição muda o foco para glúteo', s: '3x', r: '12', type: 'glute' },
+      ]},
+      { title: '💪 Bíceps — 2º estímulo', exs: [
+        { n: 'Rosca direta no cabo (barra reta)', o: 'Amplitude completa — 2º estímulo semanal', s: '3x', r: '10–12', type: 'maq' },
+        { n: 'Rosca 21 no cabo', o: '7 parcial baixo + 7 parcial alto + 7 completas', s: '2x', r: '21', type: 'maq' },
+      ]},
+      { title: '🏋️ Complemento', exs: [
+        { n: 'Remada na máquina (costas)', o: 'Manter volume de costas', s: '3x', r: '12', type: 'maq' },
+        { n: 'Desenvolvimento na máquina (ombros)', o: 'Volume extra de ombros', s: '3x', r: '12', type: 'maq' },
+      ]},
+      { title: '🔥 Core', exs: [
+        { n: 'Crunch no cabo (ajoelhado)', o: 'Polia alta, corda na nuca', s: '3x', r: '15', type: 'core' },
+        { n: 'Elevação de pernas deitado', o: 'Lombar colada no chão — só sobe as pernas', s: '3x', r: '12–15', type: 'core' },
+        { n: 'Prancha frontal', o: 'Segurar 45–60s — fechar o treino', s: '3x', r: '50s', type: 'core' },
+      ]},
+    ],
+    tips: ['Hip thrust: empurra o quadril pra cima, não arqueia a lombar', '2º estímulo de bíceps no domingo = braços crescem mais rápido', 'Rosca 21 é pesada — usa menos carga do que parece']
+  },
+];
+
+const chipClass = { maq: '', glute: ' glute-chip', core: ' core-chip' };
+const exClass = { maq: '', glute: ' glute', core: ' core' };
+const chipLabel = { maq: 'máquina', glute: '🍑 glúteo', core: '🔥 core' };
+const badgeClass = { bp:'bp', bl:'bl', bg:'bg', bs:'bs', bfull:'bfull' };
+let active = 1;
+
+function renderEx(e) {
+  return `<div class="ex${exClass[e.type]||''}">
+    <div>
+      <div class="ex-name">${e.n}</div>
+      <div class="ex-note">${e.o}</div>
+      <span class="ex-chip${chipClass[e.type]||''}">${chipLabel[e.type]||'máquina'}</span>
+    </div>
+    <div class="ex-sets"><div class="ex-num">${e.s} ${e.r}</div><div class="ex-lbl">séries · reps</div></div>
+  </div>`;
+}
+
+function render() {
+  document.getElementById('nav').innerHTML = days.map((d,i) =>
+    `<button class="day-btn${d.rest?' rest':''}${i===active?' active':''}" onclick="${d.rest?'':('setDay('+i+')')}">${d.label}</button>`
+  ).join('');
+  const d = days[active];
+  if (d.rest) {
+    document.getElementById('content').innerHTML = `<div class="card"><div class="rest-box"><div style="font-size:28px;margin-bottom:8px">🌙</div><div class="rest-txt">Dia de descanso</div><div class="rest-sub">Caminhada leve, alongamento ou mobilidade articular</div></div></div>`;
+    return;
+  }
+  let exHTML = '';
+  if (d.sections) {
+    d.sections.forEach(sec => {
+      exHTML += `<div class="section-sep">${sec.title}</div><div class="ex-list">${sec.exs.map(renderEx).join('')}</div>`;
+    });
+  } else {
+    exHTML = `<div class="ex-list">${d.ex.map(renderEx).join('')}</div>`;
+  }
+  document.getElementById('content').innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">${d.title} <span class="badge ${badgeClass[d.badge]}">${d.bl}</span></div>
+        <span class="time-tag${d.long?' long':''}">${d.time}</span>
+      </div>
+      ${d.alert?`<div class="alert"><div class="alert-title">ℹ Info</div><p>${d.alert}</p></div>`:''}
+      ${exHTML}
+      <div class="tips"><div class="tips-title">💡 Dicas do dia</div><ul>${d.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+    </div>`;
+}
+function setDay(i) { active = i; render(); }
+render();
+</script>
+</body>
+</html>
