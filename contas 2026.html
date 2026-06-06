@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Contas 2026 — Fernando</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:   #1B2A4A;
+    --blue:   #2E4D8A;
+    --teal:   #17A589;
+    --red:    #C0392B;
+    --amber:  #E67E22;
+    --green:  #1D8348;
+    --bg:     #F0F2F5;
+    --card:   #FFFFFF;
+    --text:   #1A1A2E;
+    --muted:  #7F8C9A;
+    --border: #E2E8F0;
+    --paid-bg:#D5F5E3;
+    --paid-tx:#1D8348;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 100px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    padding: 20px 20px 28px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(27,42,74,0.3);
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .header-title span {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .month-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .month-btn {
+    background: rgba(255,255,255,0.12);
+    border: none;
+    color: #fff;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .month-btn:active { background: rgba(255,255,255,0.25); }
+  .month-label {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: #fff;
+    min-width: 90px;
+    text-align: center;
+  }
+
+  /* ── KPI STRIP ── */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 0 16px;
+    margin-top: -14px;
+    position: relative;
+    z-index: 90;
+  }
+  .kpi {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+  .kpi-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .kpi-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    color: var(--text);
+  }
+  .kpi-value.neg { color: var(--red); }
+  .kpi-value.pos { color: var(--teal); }
+  .kpi-value.warn { color: var(--amber); }
+
+  /* ── PROGRESS BAR ── */
+  .progress-section {
+    padding: 20px 16px 10px;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .progress-bar-bg {
+    background: var(--border);
+    border-radius: 99px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--teal), var(--blue));
+    transition: width .5s ease;
+  }
+
+  /* ── FILTER TABS ── */
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    padding: 8px 16px 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-btn {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 99px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .filter-btn.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: #fff;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px 10px;
+  }
+  .section-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .section-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── BILL CARD ── */
+  .bills-list {
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .bill-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all .25s;
+    border: 2px solid transparent;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .bill-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--cat-color, var(--blue));
+    border-radius: 0 4px 4px 0;
+  }
+  .bill-card.paid {
+    background: var(--paid-bg);
+    border-color: rgba(29,131,72,0.2);
+  }
+  .bill-card.paid::before {
+    background: var(--teal);
+  }
+  .bill-card:active {
+    transform: scale(0.98);
+  }
+
+  .bill-check {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    transition: all .2s;
+  }
+  .bill-card.paid .bill-check {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+  }
+
+  .bill-info { flex: 1; min-width: 0; }
+  .bill-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bill-card.paid .bill-name {
+    text-decoration: line-through;
+    color: var(--paid-tx);
+    opacity: 0.8;
+  }
+  .bill-meta {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .bill-card.paid .bill-meta {
+    color: var(--paid-tx);
+    opacity: 0.65;
+  }
+
+  .bill-amount {
+    font-family: 'DM Serif Display', serif;
+    font-size: 16px;
+    color: var(--red);
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .bill-card.paid .bill-amount {
+    color: var(--paid-tx);
+    opacity: 0.7;
+  }
+  .bill-amount small {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .5px;
+    margin-top: 1px;
+  }
+
+  /* ── INCOME CARD ── */
+  .income-card {
+    background: linear-gradient(135deg, #E8F8F5, #D5F5E3);
+    border-color: rgba(23,165,137,0.2);
+  }
+  .income-card::before { background: var(--teal); }
+  .income-card .bill-amount { color: var(--green); }
+  .income-card .bill-name { color: var(--green); }
+
+  /* ── BOTTOM NAV (reset button) ── */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 12px 20px 24px;
+    display: flex;
+    gap: 10px;
+    z-index: 200;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  }
+  .btn-reset {
+    flex: 1;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .btn-save {
+    flex: 2;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-save:active { background: var(--blue); }
+
+  /* ── ALERTS INFO BOX ── */
+  .alert-box {
+    margin: 0 16px 24px;
+    background: #FEF9E7;
+    border: 1.5px solid #F9E79F;
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .alert-box-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .alert-box p {
+    font-size: 12px;
+    color: #7D6608;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .alert-box p:last-child { margin-bottom: 0; }
+  .alert-box a {
+    color: var(--blue);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .alert-box code {
+    background: rgba(0,0,0,0.07);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--navy);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all .3s;
+    z-index: 300;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="header-title">
+      <span>Controle Pessoal</span>
+      Contas 2026
+    </div>
+    <div class="month-selector">
+      <button class="month-btn" onclick="changeMonth(-1)">‹</button>
+      <div class="month-label" id="monthLabel">Janeiro</div>
+      <button class="month-btn" onclick="changeMonth(1)">›</button>
+    </div>
+  </div>
+</div>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="kpi">
+    <div class="kpi-label">Saídas</div>
+    <div class="kpi-value neg" id="kpiSaidas">R$ 0</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Entradas</div>
+    <div class="kpi-value pos" id="kpiEntradas">R$ 0</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-label">Saldo</div>
+    <div class="kpi-value" id="kpiSaldo">R$ 0</div>
+  </div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-section">
+  <div class="progress-label">
+    <span id="progressLabel">Contas pagas</span>
+    <span id="progressPct">0%</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- FILTER TABS -->
+<div class="filter-row">
+  <button class="filter-btn active" onclick="setFilter('all', this)">Todas</button>
+  <button class="filter-btn" onclick="setFilter('pending', this)">A Pagar</button>
+  <button class="filter-btn" onclick="setFilter('paid', this)">Pagas</button>
+  <button class="filter-btn" onclick="setFilter('pessoal', this)">Pessoal</button>
+  <button class="filter-btn" onclick="setFilter('fixo', this)">Fixo</button>
+  <button class="filter-btn" onclick="setFilter('moradia', this)">Moradia</button>
+  <button class="filter-btn" onclick="setFilter('entradas', this)">Entradas</button>
+</div>
+
+<!-- BILLS CONTENT -->
+<div id="content"></div>
+
+<!-- ALERTS INFO BOX -->
+<div class="alert-box" id="alertBox">
+  <div class="alert-box-title">🔔 Como receber alertas</div>
+  <p><strong>Opção 1 — WhatsApp (Callmebot, gratuito):</strong><br>
+    1. Envie uma mensagem para <a href="https://wa.me/34644597188" target="_blank">+34 644 597 188</a> no WhatsApp: <code>I allow callmebot to send me messages</code><br>
+    2. Você receberá um <strong>apikey</strong>.<br>
+    3. Configure um lembrete no seu celular (Google Agenda ou app de alarme) com a URL:<br>
+    <code>https://api.callmebot.com/whatsapp.php?phone=SEU_NUMERO&text=LEMBRETE&apikey=SUA_KEY</code>
+  </p>
+  <p><strong>Opção 2 — Telegram (mais simples):</strong><br>
+    Crie um bot pelo <a href="https://t.me/BotFather" target="_blank">@BotFather</a> no Telegram e configure lembretes automáticos via Google Apps Script ou Zapier — avise que posso montar isso pra você.</p>
+  <p><strong>Opção 3 — Google Agenda:</strong><br>
+    Adicione cada conta como evento recorrente mensal com notificação 3 dias antes — rápido e sem custo.</p>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <button class="btn-reset" onclick="resetMonth()">🔄 Resetar mês</button>
+  <button class="btn-save" onclick="saveState()">💾 Salvar progresso</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const MONTHS = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+// ── DATA ──
+// Each bill: { id, name, cat, type, amounts: [jan..dez], fixed }
+// cat: pessoal | fixo | moradia | variavel | entrada
+const BILLS = [
+  // SAÍDAS
+  {id:'nextel',    name:'Nextel',                    cat:'pessoal', type:'saida',   amounts:[48.02,47.97,48.02,48.02,48.02,48.02,47.97,47.97,47.97,47.97,47.97,47.97]},
+  {id:'xp',        name:'XP',                        cat:'pessoal', type:'saida',   amounts:[158.06,0,0,0,0,0,0,0,0,0,0,0]},
+  {id:'nanquim',   name:'Nanquim',                   cat:'pessoal', type:'saida',   amounts:[5705.47,5705.47,4243.11,4678.86,5082.17,5683.4,4000,3000,3000,3000,3000,3000]},
+  {id:'invpedro',  name:'Investimento Pedro',         cat:'pessoal', type:'saida',   amounts:[66,66,66,66,66,66,66,66,66,66,66,66]},
+  {id:'c6',        name:'C6',                        cat:'pessoal', type:'saida',   amounts:[39.9,39.9,39.9,0,0,0,0,0,0,0,0,0]},
+  {id:'custas',    name:'Custas Divórcio',            cat:'variavel',type:'saida',   amounts:[0,0,0,412.02,0,0,0,0,0,0,0,0]},
+  {id:'caucao',    name:'Caução Valery',              cat:'variavel',type:'saida',   amounts:[416.67,0,0,0,0,0,0,0,0,0,0,0]},
+  {id:'futebol',   name:'Futebol',                   cat:'pessoal', type:'saida',   amounts:[35,35,35,35,35,35,35,35,35,35,35,35]},
+  {id:'pensaopedro',name:'Pensão Pedro',             cat:'pessoal', type:'saida',   amounts:[1250,1250,1250,1450,1250,1250,1250,1250,1250,1250,1250,1250]},
+  {id:'segcartao', name:'Seguro Cartão',             cat:'pessoal', type:'saida',   amounts:[5.74,5.74,5.74,5.74,5.74,5.74,5.74,5.74,5.74,5.74,5.74,5.74]},
+  {id:'segtrans',  name:'Seguro Transação Protegida',cat:'pessoal', type:'saida',   amounts:[3.15,3.15,3.15,3.15,3.15,3.15,3.15,3.15,3.15,3.15,3.15,3.15]},
+  {id:'multa',     name:'Multa',                     cat:'variavel',type:'saida',   amounts:[0,104.13,0,0,0,0,0,0,0,0,0,0]},
+  {id:'fotos',     name:'Fotos imã',                 cat:'variavel',type:'saida',   amounts:[0,24,0,0,0,0,0,0,0,0,0,0]},
+  {id:'aluguel',   name:'Aluguel',                   cat:'fixo',    type:'saida',   amounts:[1476.97,1502.9,1528.83,1478.53,1473.34,1800,1800,1800,1800,1800,1800,1800]},
+  {id:'pensaojulia',name:'Pensão Júlia',             cat:'fixo',    type:'saida',   amounts:[869,920.5,920.5,920.5,920.5,920.5,920.5,920.5,920.5,920.5,920.5,920.5]},
+  {id:'condvalery',name:'Condomínio Valery I',       cat:'fixo',    type:'saida',   amounts:[318.51,318.51,318.51,318.51,318.51,318.51,318.51,318.51,318.51,318.51,318.51,318.51]},
+  {id:'condrenoir',name:'Condomínio Renoir I',       cat:'fixo',    type:'saida',   amounts:[273.81,277.51,277.51,275.66,275.66,277.51,277.51,277.51,277.51,277.51,277.51,277.51]},
+  {id:'celesc',    name:'Celesc',                    cat:'fixo',    type:'saida',   amounts:[244.35,292.43,263.7,287.88,286.57,238.83,263.7,263.7,263.7,263.7,263.7,263.7]},
+  {id:'ipturenoir',name:'IPTU Renoir 2026',          cat:'fixo',    type:'saida',   amounts:[278.51,278.51,278.51,278.51,278.51,278.51,278.51,278.51,278.51,278.51,278.51,278.51]},
+  {id:'iptuvaler', name:'IPTU Valery 2026',          cat:'fixo',    type:'saida',   amounts:[91.01,91.01,91.01,91.01,91.01,91.01,91.01,91.01,91.01,91.01,91.01,91.01]},
+  {id:'advdivorc', name:'Advogado Divórcio',         cat:'fixo',    type:'saida',   amounts:[0,0,0,400,400,400,400,400,0,0,0,0]},
+  {id:'internet',  name:'Internet',                  cat:'moradia', type:'saida',   amounts:[119.9,119.9,119.9,119.9,119.9,119.9,119.9,119.9,119.9,119.9,119.9,119.9]},
+  {id:'condpain',  name:'Condomínio Paineiras',      cat:'moradia', type:'saida',   amounts:[383.43,397.25,402.16,425.68,423.84,397.25,397.25,397.25,397.25,397.25,397.25,397.25]},
+  {id:'reformaval',name:'Reforma Valery',            cat:'moradia', type:'saida',   amounts:[171.11,171.11,0,0,0,0,0,0,0,0,0,0]},
+  {id:'natacao',   name:'Natação',                   cat:'moradia', type:'saida',   amounts:[0,0,40,40,40,40,40,40,40,40,40,40]},
+  {id:'advogada',  name:'Advogada',                  cat:'moradia', type:'saida',   amounts:[166.67,166.67,166.67,166.67,166.67,166.67,0,0,0,0,0,0]},
+  {id:'tvbox',     name:'TV Box',                    cat:'moradia', type:'saida',   amounts:[35,35,35,35,35,35,35,35,35,35,35,35]},
+  {id:'cartaoporto',name:'Cartão Porto',             cat:'moradia', type:'saida',   amounts:[172.11,172.11,172.11,172.11,172.11,172.11,172.11,172.11,172.11,172.11,172.11,172.11]},
+  {id:'ir2026',    name:'IR 2026',                   cat:'variavel',type:'saida',   amounts:[0,0,0,0,523.2,523.2,523.2,523.2,523.2,523.2,523.2,523.2]},
+  // ENTRADAS
+  {id:'salipel',   name:'Salário IPEL',              cat:'entrada', type:'entrada', amounts:[2657.07,1992.61,0,0,0,0,0,0,0,0,0,0]},
+  {id:'bauru',     name:'Bauru',                     cat:'entrada', type:'entrada', amounts:[265.93,1033.67,264.24,265.93,265.93,265.93,265.93,265.93,265.93,265.93,265.93,265.93]},
+  {id:'valery',    name:'Valery',                    cat:'entrada', type:'entrada', amounts:[0,0,0,0,0,0,0,0,0,0,0,0]},
+  {id:'camara',    name:'Câmara',                    cat:'entrada', type:'entrada', amounts:[469.17,155.94,483.39,483.39,483.39,483.39,483.39,483.39,483.39,483.39,483.39,483.39]},
+  {id:'renoir',    name:'Renoir',                    cat:'entrada', type:'entrada', amounts:[1396.76,1396.76,1396.76,1396.76,1396.76,1396.76,1396.76,1396.76,1396.76,1396.76,1396.76,1396.76]},
+  {id:'neiva',     name:'Neiva',                     cat:'entrada', type:'entrada', amounts:[966.48,130,1845,2095.75,1200,1500,1500,1500,1500,1500,1500,1500]},
+  {id:'saltotal',  name:'Salário Total',             cat:'entrada', type:'entrada', amounts:[2232.78,2232.78,0,4442.71,5566,5481.29,5481.29,5481.29,5481.29,5481.29,5481.29,5481.29]},
+  {id:'reserva',   name:'Reserva de Emergência',     cat:'entrada', type:'entrada', amounts:[0,0,5115.95,2024.22,2102.82,0,0,0,0,0,0,0]},
+  {id:'fiis',      name:'Rendimentos FIIs',          cat:'entrada', type:'entrada', amounts:[1388,2300,1200,1000,1000,1000,1000,1000,1000,1000,1000,1000]},
+];
+
+const CAT_COLORS = {
+  pessoal: '#3498DB',
+  fixo:    '#E67E22',
+  moradia: '#9B59B6',
+  variavel:'#95A5A6',
+  entrada: '#17A589',
+};
+
+const CAT_LABELS = {
+  pessoal:'Pessoal', fixo:'Fixo', moradia:'Moradia', variavel:'Variável', entrada:'Entrada'
+};
+
+// ── STATE ──
+let currentMonth = new Date().getMonth();
+let activeFilter = 'all';
+let paidState = {};  // { billId_monthIdx: true/false }
+
+function storageKey() { return `contas2026_paid`; }
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(storageKey());
+    if (s) paidState = JSON.parse(s);
+  } catch(e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(storageKey(), JSON.stringify(paidState));
+    showToast('✅ Progresso salvo!');
+  } catch(e) {
+    showToast('Erro ao salvar');
+  }
+}
+
+function resetMonth() {
+  const m = currentMonth;
+  BILLS.forEach(b => { delete paidState[`${b.id}_${m}`]; });
+  render();
+  showToast('🔄 Mês resetado');
+}
+
+function togglePaid(billId) {
+  const key = `${billId}_${currentMonth}`;
+  paidState[key] = !paidState[key];
+  render();
+  saveState();
+}
+
+function isPaid(billId) {
+  return !!paidState[`${billId}_${currentMonth}`];
+}
+
+function fmtBRL(v) {
+  if (!v || v === 0) return null;
+  return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function fmtBRLShort(v) {
+  if (!v || v === 0) return 'R$ 0';
+  if (Math.abs(v) >= 1000) {
+    return 'R$ ' + (v/1000).toLocaleString('pt-BR', {minimumFractionDigits:1, maximumFractionDigits:1}) + 'k';
+  }
+  return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0});
+}
+
+function changeMonth(dir) {
+  currentMonth = (currentMonth + dir + 12) % 12;
+  render();
+}
+
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function getMonthBills() {
+  return BILLS.filter(b => {
+    const val = b.amounts[currentMonth];
+    return val && val > 0;
+  });
+}
+
+function filteredBills(bills) {
+  return bills.filter(b => {
+    const paid = isPaid(b.id);
+    if (activeFilter === 'pending') return !paid;
+    if (activeFilter === 'paid')    return paid;
+    if (activeFilter === 'entradas') return b.type === 'entrada';
+    if (['pessoal','fixo','moradia'].includes(activeFilter)) return b.cat === activeFilter;
+    return true;
+  });
+}
+
+function render() {
+  // Update month label
+  document.getElementById('monthLabel').textContent = MONTHS[currentMonth];
+
+  const monthBills = getMonthBills();
+  const saidas  = monthBills.filter(b => b.type === 'saida');
+  const entradas = monthBills.filter(b => b.type === 'entrada');
+
+  const totalSaidas   = saidas.reduce((s,b) => s + b.amounts[currentMonth], 0);
+  const totalEntradas = entradas.reduce((s,b) => s + b.amounts[currentMonth], 0);
+  const saldo = totalEntradas - totalSaidas;
+
+  // KPIs
+  document.getElementById('kpiSaidas').textContent   = fmtBRLShort(totalSaidas);
+  document.getElementById('kpiEntradas').textContent = fmtBRLShort(totalEntradas);
+  const kpiSaldo = document.getElementById('kpiSaldo');
+  kpiSaldo.textContent = fmtBRLShort(Math.abs(saldo));
+  kpiSaldo.className = 'kpi-value ' + (saldo >= 0 ? 'pos' : 'neg');
+
+  // Progress
+  const totalItems = monthBills.length;
+  const paidItems  = monthBills.filter(b => isPaid(b.id)).length;
+  const pct = totalItems > 0 ? Math.round(paidItems/totalItems*100) : 0;
+  document.getElementById('progressLabel').textContent = `${paidItems} de ${totalItems} itens confirmados`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  // Filtered bills
+  const filteredSaidas  = activeFilter === 'entradas' ? [] : filteredBills(saidas);
+  const filteredEntradas = activeFilter !== 'entradas' && activeFilter !== 'all' && !['pessoal','fixo','moradia'].includes(activeFilter)
+    ? filteredBills(entradas)
+    : (activeFilter === 'entradas' || activeFilter === 'all' ? filteredBills(entradas) : []);
+
+  let html = '';
+
+  // SAÍDAS section
+  if (filteredSaidas.length > 0) {
+    html += `<div class="section-header">
+      <div class="section-dot" style="background:var(--red)"></div>
+      <div class="section-title">Saídas / Despesas</div>
+      <div class="section-count">${filteredSaidas.length} itens</div>
+    </div>
+    <div class="bills-list">`;
+
+    filteredSaidas.forEach(b => {
+      const val = b.amounts[currentMonth];
+      const paid = isPaid(b.id);
+      html += `<div class="bill-card ${paid?'paid':''}" onclick="togglePaid('${b.id}')" style="--cat-color:${CAT_COLORS[b.cat]}">
+        <div class="bill-check">${paid ? '✓' : ''}</div>
+        <div class="bill-info">
+          <div class="bill-name">${b.name}</div>
+          <div class="bill-meta">${CAT_LABELS[b.cat]} · ${paid?'✅ Pago':'⏳ Pendente'}</div>
+        </div>
+        <div class="bill-amount">${fmtBRL(val)}<small>${paid?'PAGO':'A PAGAR'}</small></div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // ENTRADAS section
+  if (filteredEntradas.length > 0) {
+    html += `<div class="section-header">
+      <div class="section-dot" style="background:var(--teal)"></div>
+      <div class="section-title">Entradas / Receitas</div>
+      <div class="section-count">${filteredEntradas.length} itens</div>
+    </div>
+    <div class="bills-list">`;
+
+    filteredEntradas.forEach(b => {
+      const val = b.amounts[currentMonth];
+      const paid = isPaid(b.id);
+      html += `<div class="bill-card income-card ${paid?'paid':''}" onclick="togglePaid('${b.id}')">
+        <div class="bill-check" style="border-color:var(--teal);${paid?'background:var(--teal);color:#fff;':''}">${paid ? '✓' : ''}</div>
+        <div class="bill-info">
+          <div class="bill-name">${b.name}</div>
+          <div class="bill-meta">Receita · ${paid?'✅ Recebido':'⏳ Aguardando'}</div>
+        </div>
+        <div class="bill-amount" style="color:var(--green)">${fmtBRL(val)}<small style="color:var(--green)">${paid?'RECEBIDO':'AGUARDANDO'}</small></div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (filteredSaidas.length === 0 && filteredEntradas.length === 0) {
+    html = `<div class="empty">Nenhum item para este mês e filtro 🎉</div>`;
+  }
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── INIT ──
+loadState();
+// Set current month to today
+currentMonth = new Date().getMonth();
+render();
+</script>
+</body>
+</html>
