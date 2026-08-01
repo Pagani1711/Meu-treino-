@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotina de Treino v4</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; }
+.app { max-width: 520px; margin: 0 auto; padding: 1.25rem 1rem 2rem; }
+h1 { font-size: 19px; font-weight: 700; margin-bottom: 3px; }
+.subtitle { font-size: 13px; color: #666; margin-bottom: 2px; }
+.created-date { font-size: 11px; color: #999; margin-bottom: 1.25rem; }
+.nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.day-btn { padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; border: 1px solid #ccc; background: #fff; color: #555; cursor: pointer; transition: all 0.15s; }
+.day-btn:hover { background: #f0f0f0; }
+.day-btn.active { background: #3C3489; border-color: #3C3489; color: #fff; }
+.day-btn.rest { opacity: 0.4; cursor: default; border-style: dashed; }
+.card { background: #fff; border-radius: 14px; border: 1px solid #e5e5e0; padding: 1.1rem 1.2rem; margin-bottom: 1rem; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 3px; }
+.card-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.badge { font-size: 11px; padding: 2px 9px; border-radius: 999px; font-weight: 700; }
+.bp { background: #EEEDFE; color: #3C3489; }
+.bl { background: #E1F5EE; color: #0F6E56; }
+.bg { background: #FAECE7; color: #993C1D; }
+.bs { background: #E6F1FB; color: #185FA5; }
+.bfull { background: #FAEEDA; color: #854F0B; }
+.time-tag { font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 700; background: #E1F5EE; color: #0F6E56; white-space: nowrap; }
+.time-tag.long { background: #E6F1FB; color: #185FA5; }
+.card-sub { font-size: 12px; color: #888; margin-bottom: .9rem; }
+.alert { margin-bottom: .9rem; padding: 9px 12px; border-radius: 8px; border-left: 3px solid #E8A020; background: #FEF6E7; }
+.alert-title { font-size: 11px; font-weight: 700; color: #8A5500; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .04em; }
+.alert p { font-size: 12px; color: #8A5500; }
+.section-sep { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: .06em; margin: 1rem 0 6px; padding-bottom: 4px; border-bottom: 1px solid #ebebeb; }
+.ex-list { display: flex; flex-direction: column; gap: 8px; }
+.ex-wrap { border-radius: 9px; background: #f8f8f5; border: 1px solid #ebebeb; overflow: hidden; }
+.ex-wrap.glute { border-left: 3px solid #993C1D; }
+.ex-wrap.core { border-left: 3px solid #3A6B1A; }
+.ex-wrap.new-item { border-left: 3px solid #3A6B1A; box-shadow: 0 0 0 1px #cfe3b8 inset; }
+.ex { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; padding: 9px 11px; cursor: pointer; }
+.ex-name { font-size: 13px; font-weight: 600; }
+.ex-note { font-size: 11px; color: #777; margin-top: 2px; }
+.ex-chip { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 999px; margin-top: 3px; margin-right: 4px; font-weight: 600; background: #EEEDFE; color: #3C3489; }
+.ex-chip.glute-chip { background: #FAECE7; color: #993C1D; }
+.ex-chip.core-chip { background: #F0F7E6; color: #3A6B1A; }
+.ex-chip.new-chip { background: #F0F7E6; color: #3A6B1A; }
+.ex-sets { text-align: right; white-space: nowrap; }
+.ex-num { font-size: 13px; font-weight: 700; color: #534AB7; }
+.ex-lbl { font-size: 10px; color: #aaa; }
+.ex-toggle { font-size: 10px; color: #534AB7; font-weight: 700; margin-top: 4px; }
+.ex-detail { display: none; padding: 0 11px 12px; border-top: 1px dashed #e2e2da; }
+.ex-detail.open { display: block; }
+.ex-detail-title { font-size: 10px; font-weight: 700; color: #534AB7; text-transform: uppercase; letter-spacing: .04em; margin: 10px 0 6px; }
+.ex-steps { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.ex-steps li { font-size: 12px; color: #444; padding-left: 16px; position: relative; }
+.ex-steps li::before { content: attr(data-i); position: absolute; left: 0; color: #534AB7; font-weight: 700; font-size: 11px; }
+.yt-link { display: inline-block; margin-top: 9px; font-size: 12px; font-weight: 700; color: #cc0000; text-decoration: none; padding: 6px 10px; border-radius: 7px; background: #fdeaea; }
+.tips { margin-top: 1rem; padding: 10px 12px; border-radius: 9px; background: #f8f8f5; border-left: 3px solid #534AB7; }
+.tips-title { font-size: 11px; font-weight: 700; color: #534AB7; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+.tips ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.tips li { font-size: 12px; color: #555; padding-left: 13px; position: relative; }
+.tips li::before { content: '→'; position: absolute; left: 0; color: #534AB7; }
+.rest-box { padding: 1.5rem; text-align: center; }
+.rest-txt { font-size: 15px; color: #666; }
+.rest-sub { font-size: 12px; color: #999; margin-top: 5px; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: .5rem; }
+.stat { padding: 9px 4px; background: #fff; border-radius: 10px; border: 1px solid #e5e5e0; text-align: center; }
+.stat-n { font-size: 16px; font-weight: 700; }
+.stat-l { font-size: 9px; color: #888; margin-top: 2px; }
+.version-tag { display: inline-block; font-size: 10px; background: #FAEEDA; color: #854F0B; padding: 2px 8px; border-radius: 999px; font-weight: 700; margin-left: 6px; vertical-align: middle; }
+.weekly-overview { background: #fff; border-radius: 14px; border: 1px solid #e5e5e0; padding: 1rem 1.2rem; margin-bottom: 1rem; }
+.weekly-title { font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+.week-row { display: flex; justify-content: space-between; gap: 4px; }
+.week-day { flex: 1; text-align: center; }
+.week-day-name { font-size: 10px; color: #aaa; margin-bottom: 4px; }
+.week-day-dot { width: 32px; height: 32px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.week-day-label { font-size: 9px; color: #888; margin-top: 3px; line-height: 1.2; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Rotina de treino <span class="version-tag">v4</span></h1>
+  <p class="subtitle">5x/semana · Máquinas · Core + Braços 2x/semana · Glúteo 3x/semana</p>
+  <p class="created-date">Criada em 31/07/2026</p>
+
+  <div class="weekly-overview">
+    <div class="weekly-title">Visão da semana</div>
+    <div class="week-row">
+      <div class="week-day"><div class="week-day-name">Seg</div><div class="week-day-dot" style="background:#f0f0ec">😴</div><div class="week-day-label">Descanso</div></div>
+      <div class="week-day"><div class="week-day-name">Ter</div><div class="week-day-dot" style="background:#FAECE7">🦵</div><div class="week-day-label">Pernas + Core</div></div>
+      <div class="week-day"><div class="week-day-name">Qua</div><div class="week-day-dot" style="background:#EEEDFE">💪</div><div class="week-day-label">Peito + Tri + Core</div></div>
+      <div class="week-day"><div class="week-day-name">Qui</div><div class="week-day-dot" style="background:#f0f0ec">😴</div><div class="week-day-label">Descanso</div></div>
+      <div class="week-day"><div class="week-day-name">Sex</div><div class="week-day-dot" style="background:#E6F1FB">🏋️</div><div class="week-day-label">Ombros + Tri ⚽</div></div>
+      <div class="week-day"><div class="week-day-name">Sáb</div><div class="week-day-dot" style="background:#E1F5EE">🔙</div><div class="week-day-label">Costas + Bic</div></div>
+      <div class="week-day"><div class="week-day-name">Dom</div><div class="week-day-dot" style="background:#FAEEDA">🍑</div><div class="week-day-label">Full Body + Glúteo</div></div>
+    </div>
+  </div>
+
+  <div class="nav" id="nav"></div>
+  <div id="content"></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n">2x</div><div class="stat-l">Bíceps/semana</div></div>
+    <div class="stat"><div class="stat-n">2x</div><div class="stat-l">Tríceps/semana</div></div>
+    <div class="stat"><div class="stat-n">3x</div><div class="stat-l">Core/semana</div></div>
+    <div class="stat"><div class="stat-n">3x</div><div class="stat-l">Glúteo/semana</div></div>
+  </div>
+</div>
+<script>
+const days = [
+  { label: 'Seg', rest: true },
+  { label: 'Ter', title: 'Pernas + Core', badge: 'bg', bl: 'Legs', time: '~50min',
+    sections: [
+      { title: '🦵 Pernas', exs: [
+        { n: 'Abdução de quadril na máquina', o: 'Glúteo médio — prioridade, agora em 1º (fresco)', s: '4x', r: '15', type: 'glute',
+          howto: ['Sente e ajuste a posição inicial com as pernas fechadas', 'Empurre as pernas pra fora contra a resistência, de forma controlada', 'Segure 1s no ponto máximo antes de voltar'] },
+        { n: 'Leg press horizontal', o: 'Principal — bloco de força (reps mais baixas)', s: '5x', r: '8–10', type: 'maq',
+          howto: ['Apoie os pés na largura dos ombros na plataforma', 'Desça controlado até o joelho fazer ~90°, sem tirar o quadril do banco', 'Empurre pelo calcanhar, sem travar o joelho no topo'] },
+        { n: 'Cadeira extensora', o: 'Quadríceps isolado', s: '4x', r: '12–15', type: 'maq',
+          howto: ['Ajuste o encosto pra o joelho alinhar com o eixo da máquina', 'Estenda quase até travar, sem chutar o peso', 'Desça controlado, ~2s de descida'] },
+        { n: 'Cadeira flexora (deitado)', o: 'Posterior sem risco lombar', s: '4x', r: '12', type: 'maq',
+          howto: ['Deite e prenda o rolo logo acima do calcanhar', 'Flexione puxando o calcanhar em direção ao glúteo', 'Não levante o quadril do banco durante o movimento'] },
+        { n: 'Adução de quadril na máquina', o: 'Parte interna da coxa', s: '3x', r: '15', type: 'maq',
+          howto: ['Ajuste a abertura inicial das pernas', 'Feche as pernas contra a resistência', 'Controle a volta, sem soltar de uma vez'] },
+      ]},
+      { title: '🔥 Core', exs: [
+        { n: 'Prancha frontal', o: 'Lombar neutra — não deixa o quadril cair', s: '3x', r: '40s', type: 'core',
+          howto: ['Cotovelos sob os ombros, corpo reto da cabeça ao calcanhar', 'Contraia abdômen e glúteo, sem deixar o quadril cair ou subir', 'Respire normalmente, sem prender o ar'] },
+        { n: 'Crunch no cabo (ajoelhado)', o: 'Polia alta, corda na nuca — sem lombar', s: '3x', r: '15', type: 'core',
+          howto: ['Ajoelhe de costas pra polia alta, segure a corda atrás da nuca', 'Flexione o tronco puxando com o abdômen, cotovelo em direção ao joelho', 'Volte controlado, sem usar os braços pra puxar'] },
+      ]},
+    ],
+    tips: ['Leg press com pés altos ativa mais glúteo', 'Bloco de força: 8-10 reps por ~4-6 semanas, depois volta pra 10-12', 'Sem panturrilha (tendão de Aquiles)']
+  },
+  { label: 'Qua', title: 'Peito + Tríceps + Core', badge: 'bp', bl: 'Push', time: '~58min',
+    sections: [
+      { title: '🫁 Peito', exs: [
+        { n: 'Supino inclinado no Smith', o: 'Agora em 1º — foco parte superior do peitoral', s: '4x', r: '8–10', type: 'maq',
+          howto: ['Ajuste o banco a 30–45° dentro do trilho', 'Desça a barra até tocar leve na parte superior do peito', 'Empurre de volta sem tirar o ombro do banco'] },
+        { n: 'Chest press (máquina)', o: 'Secundário agora — mesma base, menos volume', s: '3x', r: '10–12', type: 'maq',
+          howto: ['Ajuste o banco pra alça na altura do peitoral', 'Empurre estendendo os braços sem travar o cotovelo', 'Volte controlado até sentir alongamento leve no peito'] },
+        { n: 'Supino declinado no Smith', o: 'Parte inferior do peitoral', s: '3x', r: '10–12', type: 'maq',
+          howto: ['Prenda os pés no suporte, banco declinado', 'Desça controlado até a barra tocar a parte inferior do peito', 'Empurre de volta sem abrir demais os cotovelos'] },
+        { n: 'Peck deck / crucifixo máquina', o: 'Isolamento — sente a contração no centro', s: '3x', r: '12–15', type: 'maq',
+          howto: ['Ajuste o assento pra os braços alinharem com o peitoral', 'Feche as almofadas na frente do peito, sem trancar', 'Volte controlado, sentindo alongamento no peito'] },
+        { n: 'Crossover no cabo', o: 'Finalizar peito — amplitude máxima', s: '3x', r: '12–15', type: 'maq',
+          howto: ['Polias altas, um pé à frente pra estabilidade', 'Puxe as duas alças pra frente e pra baixo, cruzando levemente', 'Braços levemente dobrados o tempo todo, sem travar cotovelo'] },
+      ]},
+      { title: '💪 Tríceps — 1º estímulo', exs: [
+        { n: 'Tríceps pulley (barra V)', o: 'Trocou de ordem com a corda — variação de pegada', s: '3x', r: '12', type: 'maq',
+          howto: ['Pegada fechada na barra V, cotovelos junto ao corpo', 'Estenda pra baixo, contraindo no final', 'Volte controlado'] },
+        { n: 'Tríceps coice no cabo', o: 'Isolamento — cotovelo fixo', s: '2x', r: '12–15', type: 'maq',
+          howto: ['Tronco levemente inclinado à frente, cotovelo fixo junto ao corpo', 'Estenda o braço pra trás, contraindo o tríceps no final', 'Volte controlado sem mover o ombro'] },
+      ]},
+      { title: '🍑 Glúteo — finalizador (novo na v4)', exs: [
+        { n: 'Cadeira abdutora', o: 'NOVO — 3º estímulo semanal de glúteo, rápido e de baixa fadiga', s: '2x', r: '15–20', type: 'glute', isNew: true,
+          howto: ['Mesmo ajuste da terça: sente com as pernas fechadas', 'Empurre pra fora contra a resistência, controlado', 'Peso mais leve que na terça — é finalizador, não o estímulo principal'] },
+      ]},
+      { title: '🔥 Core', exs: [
+        { n: 'Crunch no cabo (ajoelhado)', o: 'Polia alta, corda na nuca', s: '3x', r: '15', type: 'core',
+          howto: ['Ajoelhe de costas pra polia alta, corda atrás da nuca', 'Flexione o tronco com o abdômen, sem puxar com os braços', 'Volte controlado'] },
+        { n: 'Prancha lateral', o: '30s cada lado — mantém o quadril alinhado', s: '2x', r: '30s', type: 'core',
+          howto: ['Apoie no antebraço, corpo em linha reta de lado', 'Não deixe o quadril cair nem subir demais', 'Troque de lado após o tempo'] },
+      ]},
+    ],
+    tips: ['Supino inclinado assumiu o posto de principal — varia o estímulo de 3 meses no chest press', 'Crossover: braços levemente dobrados, fecha o peito', 'Cadeira abdutora aqui é rápida (~3-4min) — não é pra fadigar, só somar frequência', 'Core no final — não pula!']
+  },
+  { label: 'Qui', rest: true },
+  { label: 'Sex', title: 'Ombros + Tríceps', badge: 'bs', bl: 'Ombros', time: '~50min',
+    alert: '⚽ Futebol às 20h — mas academia é às 5h30, então 14h de intervalo. Sem problema!',
+    sections: [
+      { title: '🏋️ Ombros', exs: [
+        { n: 'Desenvolvimento na máquina', o: 'Principal — sem instabilidade na lombar', s: '4x', r: '10–12', type: 'maq',
+          howto: ['Ajuste o banco pra as alças ficarem na altura do ombro', 'Empurre pra cima sem travar o cotovelo no topo', 'Desça controlado até a altura de partida'] },
+        { n: 'Elevação lateral na máquina', o: 'Deltóide medial — reps mais altas agora', s: '4x', r: '15–20', type: 'maq',
+          howto: ['Cotovelo levemente flexionado, alinhado com o ombro', 'Eleve até a altura do ombro, sem usar impulso', 'Desça controlado, sem deixar o peso bater'] },
+        { n: 'Peck deck invertido (deltóide posterior)', o: 'Mais volume — ponto historicamente menos trabalhado', s: '4x', r: '15–20', type: 'maq',
+          howto: ['Sente de frente pro encosto, peito apoiado', 'Abra os braços pra trás, contraindo entre as escápulas', 'Volte controlado'] },
+        { n: 'Encolhimento na máquina', o: 'Trapézio superior', s: '3x', r: '12–15', type: 'maq',
+          howto: ['Segure as alças com os braços estendidos', 'Suba os ombros em direção às orelhas, sem rodar', 'Desça controlado, sentindo o alongamento'] },
+      ]},
+      { title: '💪 Tríceps — 2º estímulo', exs: [
+        { n: 'Tríceps francês no cabo (barra reta)', o: 'Amplitude máxima — 2º estímulo semanal', s: '3x', r: '10–12', type: 'maq',
+          howto: ['Cotovelos apontando pra frente, barra atrás da cabeça', 'Estenda os braços pra cima, sem abrir os cotovelos', 'Desça controlado até sentir alongamento'] },
+        { n: 'Mergulho no banco (bench dip)', o: 'Peso corporal — trocou de ordem, agora antes da corda', s: '3x', r: '12–15', type: 'maq',
+          howto: ['Mãos no banco atrás do corpo, pernas estendidas à frente', 'Desça flexionando os cotovelos até ~90°', 'Empurre de volta usando o tríceps'] },
+      ]},
+    ],
+    tips: ['2º estímulo de tríceps na semana = crescimento acelerado', 'Peck deck invertido subiu de volume — postura e equilíbrio de ombro', 'Alonga o tendão de Aquiles antes do futebol à noite']
+  },
+  { label: 'Sáb', title: 'Costas + Bíceps', badge: 'bl', bl: 'Pull', time: '~50min',
+    sections: [
+      { title: '🔙 Costas', exs: [
+        { n: 'Remada na máquina (assento)', o: 'Agora em 1º — foco espessura, bloco de força', s: '4x', r: '8–10', type: 'maq',
+          howto: ['Peito apoiado no encosto, pegue as alças', 'Puxe em direção ao abdômen, cotovelos junto ao corpo', 'Volte controlado sem tirar o peito do apoio'] },
+        { n: 'Puxada na máquina (pegada larga)', o: 'Secundário agora — mesma base, menos volume', s: '3x', r: '10–12', type: 'maq',
+          howto: ['Pegada larga na barra, tronco levemente inclinado atrás', 'Puxe com as costas, cotovelos indo pra baixo e pra trás', 'Suba controlado, sem deixar o peso bater'] },
+        { n: 'Puxada pegada neutra (triângulo)', o: 'Variação — mais bíceps envolvido', s: '3x', r: '12', type: 'maq',
+          howto: ['Pegue a barra triângulo com as palmas se olhando', 'Puxe até a barra chegar perto do peito', 'Volte controlado, braços quase estendidos no topo'] },
+      ]},
+      { title: '💪 Bíceps — 1º estímulo', exs: [
+        { n: 'Rosca na Scott machine', o: 'Sem balanço — bloco de força agora — 1º estímulo semanal', s: '3x', r: '8–10', type: 'maq',
+          howto: ['Braço apoiado no encosto inclinado, cotovelo fixo', 'Flexione até contrair bem o bíceps, sem tirar o cotovelo do apoio', 'Desça controlado até quase estender'] },
+        { n: 'Rosca martelo no cabo', o: 'Braquial — volume na parte externa do braço', s: '3x', r: '12', type: 'maq',
+          howto: ['Pegada neutra (martelo), cotovelos junto ao corpo', 'Flexione sem girar o punho', 'Desça controlado'] },
+        { n: 'Rosca concentrada com halter', o: 'Isolamento máximo — pico do bíceps', s: '3x', r: '10–12', type: 'maq',
+          howto: ['Sentado, cotovelo apoiado na parte interna da coxa', 'Flexione contraindo bem no topo', 'Desça bem controlado, sem balançar'] },
+      ]},
+    ],
+    tips: ['Remada assumiu o 1º lugar — varia o estímulo de 3 meses na puxada larga', 'Controle a descida nas roscas — fase excêntrica é ouro', 'Rosca concentrada: cotovelo no joelho, sem balanço']
+  },
+  { label: 'Dom', title: 'Full Body + Glúteo', badge: 'bfull', bl: 'Full Body', time: '~75min', long: true,
+    sections: [
+      { title: '🍑 Glúteo — prioridade', exs: [
+        { n: 'Elevação pélvica (hip thrust) na máquina', o: 'Melhor exercício para glúteo — carga progressiva, reps mais baixas', s: '4x', r: '10–12', type: 'glute',
+          howto: ['Costas apoiadas no banco, barra/almofada na altura do quadril', 'Empurre o quadril pra cima até o corpo ficar reto', 'Pausa 1-2s contraindo o glúteo no topo, desça controlado'] },
+        { n: 'Cadeira abdutora com tronco inclinado', o: 'Inclinar pra frente ativa mais glúteo médio', s: '4x', r: '15', type: 'glute',
+          howto: ['Sente e incline o tronco levemente pra frente', 'Empurre as pernas pra fora, controlado', 'Segure 1s no ponto máximo'] },
+        { n: 'Leg press com pés altos e afastados', o: 'Mais um set — volume extra pro glúteo', s: '4x', r: '12', type: 'glute',
+          howto: ['Pés mais altos e mais afastados na plataforma que o normal', 'Desça controlado até ~90° de joelho', 'Empurre pelo calcanhar, sentindo mais o glúteo que o quadríceps'] },
+      ]},
+      { title: '💪 Bíceps — 2º estímulo', exs: [
+        { n: 'Rosca direta no cabo (barra reta)', o: 'Amplitude completa — 2º estímulo semanal', s: '3x', r: '10–12', type: 'maq',
+          howto: ['Pegada pronada na barra reta do cabo', 'Flexione até contrair bem, cotovelos fixos', 'Desça até quase estender totalmente'] },
+        { n: 'Rosca 21 no cabo', o: '7 parcial baixo + 7 parcial alto + 7 completas', s: '2x', r: '21', type: 'maq',
+          howto: ['7 reps na metade inferior do movimento', '7 reps na metade superior', '7 reps completas pra fechar — usa carga mais leve que o normal'] },
+      ]},
+      { title: '🏋️ Complemento', exs: [
+        { n: 'Remada na máquina (costas)', o: 'Manter volume de costas', s: '3x', r: '12', type: 'maq',
+          howto: ['Mesma execução de sábado: peito apoiado, puxe até o abdômen', 'Cotovelos junto ao corpo', 'Volte controlado'] },
+        { n: 'Desenvolvimento na máquina (ombros)', o: 'Volume extra de ombros', s: '3x', r: '12', type: 'maq',
+          howto: ['Mesma execução de sexta: alças na altura do ombro', 'Empurre pra cima sem travar', 'Desça controlado'] },
+      ]},
+      { title: '🔥 Core', exs: [
+        { n: 'Crunch no cabo (ajoelhado)', o: 'Polia alta, corda na nuca', s: '3x', r: '15', type: 'core',
+          howto: ['Ajoelhado de costas pra polia, corda na nuca', 'Flexione com o abdômen', 'Volte controlado'] },
+        { n: 'Elevação de pernas deitado', o: 'Lombar colada no chão — só sobe as pernas', s: '3x', r: '12–15', type: 'core',
+          howto: ['Deitado, lombar sempre colada no chão', 'Suba as pernas estendidas ou semi-flexionadas', 'Desça controlado sem deixar a lombar arquear'] },
+        { n: 'Prancha frontal', o: 'Segurar 45–60s — fechar o treino', s: '3x', r: '50s', type: 'core',
+          howto: ['Cotovelos sob os ombros, corpo reto', 'Contraia abdômen e glúteo', 'Respire normal'] },
+      ]},
+    ],
+    tips: ['Hip thrust: empurra o quadril pra cima, não arqueia a lombar', 'Leg press pés altos ganhou 1 série extra — glúteo é prioridade', 'Rosca 21 é pesada — usa menos carga do que parece']
+  },
+];
+
+const chipClass = { maq: '', glute: ' glute-chip', core: ' core-chip' };
+const exClass = { maq: '', glute: ' glute', core: ' core' };
+const chipLabel = { maq: 'máquina', glute: '🍑 glúteo', core: '🔥 core' };
+const badgeClass = { bp:'bp', bl:'bl', bg:'bg', bs:'bs', bfull:'bfull' };
+let active = 1;
+let uid = 0;
+
+function ytLink(name) {
+  const q = encodeURIComponent(name + ' execução correta');
+  return `<a class="yt-link" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ Ver execução no YouTube</a>`;
+}
+
+function renderEx(e) {
+  const id = 'ex' + (uid++);
+  const hasDetail = !!e.howto;
+  return `<div class="ex-wrap${exClass[e.type]||''}${e.isNew?' new-item':''}">
+    <div class="ex" ${hasDetail?`onclick="toggleEx('${id}')"`:''}>
+      <div>
+        <div class="ex-name">${e.n}</div>
+        <div class="ex-note">${e.o}</div>
+        <span class="ex-chip${chipClass[e.type]||''}">${chipLabel[e.type]||'máquina'}</span>
+        ${e.isNew?'<span class="ex-chip new-chip">novo v4</span>':''}
+        ${hasDetail?`<div class="ex-toggle">▾ como executar</div>`:''}
+      </div>
+      <div class="ex-sets"><div class="ex-num">${e.s} ${e.r}</div><div class="ex-lbl">séries · reps</div></div>
+    </div>
+    ${hasDetail?`<div class="ex-detail" id="${id}">
+      <div class="ex-detail-title">Como executar</div><ol class="ex-steps">${e.howto.map((s,i)=>`<li data-i="${i+1}.">${s}</li>`).join('')}</ol>
+      ${ytLink(e.n)}
+    </div>`:''}
+  </div>`;
+}
+
+function toggleEx(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+function render() {
+  document.getElementById('nav').innerHTML = days.map((d,i) =>
+    `<button class="day-btn${d.rest?' rest':''}${i===active?' active':''}" onclick="${d.rest?'':('setDay('+i+')')}">${d.label}</button>`
+  ).join('');
+  const d = days[active];
+  if (d.rest) {
+    document.getElementById('content').innerHTML = `<div class="card"><div class="rest-box"><div style="font-size:28px;margin-bottom:8px">🌙</div><div class="rest-txt">Dia de descanso</div><div class="rest-sub">Caminhada leve, alongamento ou mobilidade articular</div></div></div>`;
+    return;
+  }
+  uid = 0;
+  let exHTML = '';
+  if (d.sections) {
+    d.sections.forEach(sec => {
+      exHTML += `<div class="section-sep">${sec.title}</div><div class="ex-list">${sec.exs.map(renderEx).join('')}</div>`;
+    });
+  }
+  document.getElementById('content').innerHTML = `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">${d.title} <span class="badge ${badgeClass[d.badge]}">${d.bl}</span></div>
+        <span class="time-tag${d.long?' long':''}">${d.time}</span>
+      </div>
+      ${d.alert?`<div class="alert"><div class="alert-title">ℹ Info</div><p>${d.alert}</p></div>`:''}
+      ${exHTML}
+      <div class="tips"><div class="tips-title">💡 Dicas do dia</div><ul>${d.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+    </div>`;
+}
+function setDay(i) { active = i; render(); }
+render();
+</script>
+</body>
+</html>
