@@ -75,14 +75,93 @@ h1 { font-size: 19px; font-weight: 700; margin-bottom: 3px; }
 .week-day-name { font-size: 10px; color: #aaa; margin-bottom: 4px; }
 .week-day-dot { width: 32px; height: 32px; border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 12px; }
 .week-day-label { font-size: 9px; color: #888; margin-top: 3px; line-height: 1.2; }
+
+/* ===== Perfil ===== */
+.perfil-btn { background: #3C3489 !important; color: #fff !important; border-color: #3C3489 !important; opacity: 1 !important; }
+.perfil-btn.active { background: #1a1550 !important; }
+.sub-box { padding: 12px; border-radius: 10px; background: #f8f8f5; border: 1px solid #ebebeb; margin-bottom: 12px; }
+.sub-box-title { font-size: 12px; font-weight: 700; color: #555; margin-bottom: 8px; }
+.hint { font-size: 11px; color: #999; margin-top: 6px; }
+.input-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.altura-row { display: flex; gap: 6px; }
+.input-sm { flex: 1; min-width: 90px; padding: 8px 10px; border-radius: 7px; border: 1px solid #ccc; font-size: 13px; background: #fff; }
+.btn-save { padding: 8px 14px; border-radius: 7px; border: none; background: #3C3489; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.btn-save:hover { background: #2d2769; }
+.history-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.history-item { padding: 9px 11px; border-radius: 8px; background: #fff; border: 1px solid #ececec; }
+.history-item-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; }
+.imc-inline { font-size: 11px; color: #888; margin-top: 3px; }
+.arrow-g { color: #2e8b3a; font-weight: 700; font-size: 11px; }
+.arrow-r { color: #c0392b; font-weight: 700; font-size: 11px; }
+.arrow-y { color: #b8860b; font-weight: 700; font-size: 11px; }
+.arrow-base { color: #bbb; font-size: 10px; }
+.measure-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.input-measure { width: 100%; padding: 8px 10px; border-radius: 7px; border: 1px solid #ccc; font-size: 12px; background: #fff; min-width: 0; }
+.measure-line { font-size: 11px; color: #666; margin-top: 3px; display: flex; justify-content: space-between; }
+.progress-row { margin: 12px 0; }
+.progress-bar { height: 12px; border-radius: 6px; background: #eee; overflow: hidden; }
+.progress-fill { height: 100%; background: #0F6E56; border-radius: 6px; transition: width .2s; }
+.progress-label { font-size: 10px; color: #888; margin-top: 5px; }
+.checkin-btn { width: 100%; padding: 14px; border-radius: 9px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 6px; }
+.checkin-btn.locked { background: #ececec; color: #999; cursor: default; }
+.checkin-btn.enabled { background: #F0F7E6; color: #3A6B1A; border: 1px solid #3A6B1A; }
+.checked-item { background: #EEEDFE; }
+.week-challenge-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 11px; }
+.week-label { width: 42px; color: #666; font-weight: 600; }
+.week-bar-bg { flex: 1; height: 12px; border-radius: 6px; background: #eee; overflow: hidden; }
+.week-bar-fill { height: 100%; background: #E8A020; border-radius: 6px; }
+.week-bar-fill.hit { background: #0F6E56; }
+.week-vals { width: 110px; text-align: right; color: #777; }
+.month-goal-box { margin-top: 10px; padding: 12px; border-radius: 9px; background: #E6F1FB; border: 1px solid #b8d4ef; text-align: center; }
+.month-goal-title { font-size: 12px; font-weight: 700; color: #185FA5; }
+.month-goal-pct { font-size: 22px; font-weight: 700; color: #185FA5; margin: 3px 0; }
+.month-goal-sub { font-size: 11px; color: #185FA5; }
+.history-row { padding: 10px 11px; border-radius: 8px; background: #f8f8f5; margin-bottom: 6px; }
+.history-main { font-size: 12px; font-weight: 600; color: #444; }
+.history-pct { font-size: 12px; font-weight: 700; margin-top: 3px; }
+.history-pct.pass { color: #0F6E56; }
+.history-pct.fail { color: #c0392b; }
+.medal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+.medal { text-align: center; padding: 10px 2px; border-radius: 10px; background: #eee; opacity: .45; }
+.medal.unlocked { background: #FAEEDA; opacity: 1; }
+.medal-icon { font-size: 20px; }
+.medal-label { font-size: 10px; color: #888; margin-top: 3px; font-weight: 700; }
+
+/* ===== Home ===== */
+.back-btn { display: inline-block; margin-bottom: 14px; padding: 7px 14px; border-radius: 999px; border: 1px solid #ccc; background: #fff; color: #555; font-size: 12px; font-weight: 600; cursor: pointer; }
+.back-btn:hover { background: #f0f0f0; }
+.home-wrap { border-radius: 20px; padding: 2rem 1.4rem 1.6rem; background: linear-gradient(135deg, #1a1550 0%, #2d1f6b 55%, #3C3489 100%); color: #fff; position: relative; overflow: hidden; }
+.home-greet { font-size: 11px; letter-spacing: 2px; color: #c9c3f0; text-align: center; }
+.home-name { font-size: 32px; font-weight: 800; font-style: italic; text-align: center; margin-top: 8px; color: #fff; }
+.home-name-underline { width: 90px; height: 3px; border-radius: 2px; margin: 8px auto 10px; background: linear-gradient(90deg, #E8A020, #FAEEDA); }
+.home-date { font-size: 11px; color: #a89ee0; text-align: center; margin-bottom: 18px; }
+.home-stats-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.home-stat { flex: 1; background: rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 4px; text-align: center; }
+.home-stat-icon { font-size: 17px; }
+.home-stat-val { font-size: 10px; font-weight: 700; color: #e8e4fa; margin-top: 4px; }
+.home-furo-note { font-size: 10px; text-align: center; color: #c9c3f0; margin-bottom: 16px; }
+.home-quote-box { position: relative; background: rgba(255,255,255,0.07); border-left: 3px solid #E8A020; border-radius: 12px; padding: 16px 18px 14px; margin-bottom: 20px; }
+.home-quote-mark { font-size: 20px; color: #FAEEDA; line-height: 1; }
+.home-quote-text { font-size: 13px; font-style: italic; color: #fff; line-height: 1.5; margin-top: 2px; }
+.home-quote-label { font-size: 10px; color: #c9c3f0; margin-top: 8px; text-align: right; }
+.home-option { width: 100%; display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 14px; border: none; margin-bottom: 10px; cursor: pointer; text-align: left; }
+.home-option-treino { background: #fff; }
+.home-option-perfil { background: linear-gradient(90deg, #E8A020, #FAEEDA); }
+.home-option-icon { font-size: 26px; }
+.home-option-text { flex: 1; display: flex; flex-direction: column; }
+.home-option-treino .home-option-title { color: #3C3489; font-size: 15px; font-weight: 800; }
+.home-option-treino .home-option-sub { color: #888; font-size: 10px; margin-top: 2px; }
+.home-option-perfil .home-option-title { color: #6b3f00; font-size: 15px; font-weight: 800; }
+.home-option-perfil .home-option-sub { color: #7a5417; font-size: 10px; margin-top: 2px; }
+.home-option-arrow { font-size: 18px; }
+.home-option-treino .home-option-arrow { color: #3C3489; }
+.home-option-perfil .home-option-arrow { color: #6b3f00; }
 </style>
 </head>
 <body>
-<div class="app">
-  <h1>Rotina de treino <span class="version-tag">v4</span></h1>
-  <p class="subtitle">5x/semana · Máquinas · Core + Braços 2x/semana · Glúteo 3x/semana</p>
-  <p class="created-date">Criada em 31/07/2026</p>
-
+<div class="app" id="app"></div>
+<script>
+const WEEKLY_OVERVIEW_HTML = `
   <div class="weekly-overview">
     <div class="weekly-title">Visão da semana</div>
     <div class="week-row">
@@ -94,18 +173,15 @@ h1 { font-size: 19px; font-weight: 700; margin-bottom: 3px; }
       <div class="week-day"><div class="week-day-name">Sáb</div><div class="week-day-dot" style="background:#E1F5EE">🔙</div><div class="week-day-label">Costas + Bic</div></div>
       <div class="week-day"><div class="week-day-name">Dom</div><div class="week-day-dot" style="background:#FAEEDA">🍑</div><div class="week-day-label">Full Body + Glúteo</div></div>
     </div>
-  </div>
-
-  <div class="nav" id="nav"></div>
-  <div id="content"></div>
+  </div>`;
+const STATS_HTML = `
   <div class="stats">
     <div class="stat"><div class="stat-n">2x</div><div class="stat-l">Bíceps/semana</div></div>
     <div class="stat"><div class="stat-n">2x</div><div class="stat-l">Tríceps/semana</div></div>
     <div class="stat"><div class="stat-n">3x</div><div class="stat-l">Core/semana</div></div>
     <div class="stat"><div class="stat-n">3x</div><div class="stat-l">Glúteo/semana</div></div>
-  </div>
-</div>
-<script>
+  </div>`;
+
 const days = [
   { label: 'Seg', rest: true },
   { label: 'Ter', title: 'Pernas + Core', badge: 'bg', bl: 'Legs', time: '~50min',
@@ -247,6 +323,7 @@ const chipClass = { maq: '', glute: ' glute-chip', core: ' core-chip' };
 const exClass = { maq: '', glute: ' glute', core: ' core' };
 const chipLabel = { maq: 'máquina', glute: '🍑 glúteo', core: '🔥 core' };
 const badgeClass = { bp:'bp', bl:'bl', bg:'bg', bs:'bs', bfull:'bfull' };
+let view = 'home';
 let active = 1;
 let uid = 0;
 
@@ -280,10 +357,11 @@ function toggleEx(id) {
   document.getElementById(id).classList.toggle('open');
 }
 
-function render() {
+function renderTreinoContent() {
   document.getElementById('nav').innerHTML = days.map((d,i) =>
     `<button class="day-btn${d.rest?' rest':''}${i===active?' active':''}" onclick="${d.rest?'':('setDay('+i+')')}">${d.label}</button>`
   ).join('');
+
   const d = days[active];
   if (d.rest) {
     document.getElementById('content').innerHTML = `<div class="card"><div class="rest-box"><div style="font-size:28px;margin-bottom:8px">🌙</div><div class="rest-txt">Dia de descanso</div><div class="rest-sub">Caminhada leve, alongamento ou mobilidade articular</div></div></div>`;
@@ -307,8 +385,512 @@ function render() {
       <div class="tips"><div class="tips-title">💡 Dicas do dia</div><ul>${d.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>
     </div>`;
 }
-function setDay(i) { active = i; render(); }
-render();
+function setDay(i) { active = i; renderTreinoContent(); }
+
+/* ================= PERFIL ================= */
+const SK = { altura: 'v4_altura', pesos: 'v4_pesos', medidas: 'v4_medidas', daylog: 'v4_daylog' };
+function loadJSON(key, fb) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fb; } catch(e) { return fb; } }
+function saveJSON(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {} }
+
+function todayISO() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function fmtDateBR(iso) { const [y,m,d] = iso.split('-'); return d + '/' + m + '/' + y.slice(2); }
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+const WEEKDAY_LABELS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+function weekdayLabelFromISO(iso) { const d = new Date(iso + 'T00:00:00'); return WEEKDAY_LABELS[d.getDay()]; }
+function dayDefByLabel(label) { return days.find(d => d.label === label); }
+function flattenExercises(dayDef) {
+  if (!dayDef || dayDef.rest) return [];
+  let list = [];
+  dayDef.sections.forEach(sec => sec.exs.forEach(e => list.push(e.n)));
+  return list;
+}
+
+/* ===== Streak com furo semanal ===== */
+const TRAINING_LABELS = ['Ter','Qua','Sex','Sáb','Dom'];
+function isTrainingLabel(label) { return TRAINING_LABELS.includes(label); }
+function mondayOfWeek(dateObj) {
+  const d = new Date(dateObj);
+  const day = d.getDay();
+  const diff = (day === 0 ? -6 : 1 - day);
+  d.setDate(d.getDate() + diff);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function weekKey(dateObj) {
+  const mon = mondayOfWeek(dateObj);
+  return mon.getFullYear() + '-' + String(mon.getMonth()+1).padStart(2,'0') + '-' + String(mon.getDate()).padStart(2,'0');
+}
+function computeStreak(daylog) {
+  const todayStr = todayISO();
+  const todayDate = new Date(todayStr + 'T00:00:00');
+  const keys = Object.keys(daylog);
+  let minDate = new Date(todayDate);
+  keys.forEach(iso => { const d = new Date(iso + 'T00:00:00'); if (d < minDate) minDate = d; });
+  let streak = 0;
+  let furoUsedThisWeek = {};
+  let cursor = new Date(minDate);
+  while (cursor < todayDate) {
+    const iso = cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0');
+    const label = weekdayLabelFromISO(iso);
+    if (isTrainingLabel(label)) {
+      const wk = weekKey(cursor);
+      if (furoUsedThisWeek[wk] === undefined) furoUsedThisWeek[wk] = false;
+      const rec = daylog[iso];
+      if (rec && rec.dayCheckedIn) {
+        streak += 1;
+      } else if (!furoUsedThisWeek[wk]) {
+        furoUsedThisWeek[wk] = true;
+      } else {
+        streak = 0;
+      }
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  const todayLabel = weekdayLabelFromISO(todayStr);
+  const wkToday = weekKey(todayDate);
+  let furoAvailable = !furoUsedThisWeek[wkToday];
+  if (isTrainingLabel(todayLabel)) {
+    const recToday = daylog[todayStr];
+    if (recToday && recToday.dayCheckedIn) streak += 1;
+  }
+  return { streak, furoAvailable };
+}
+
+/* ===== Frases do dia (60, fixas, rotativas por dia do ano) ===== */
+const PHRASES = [
+  'Consistência não é motivação todo dia. É disciplina nos dias sem motivação.',
+  'O corpo muda na média de 90 dias, não na euforia de 1.',
+  'Você não precisa se superar hoje. Precisa aparecer hoje.',
+  'Todo platô que você já quebrou começou parecendo permanente.',
+  'Descanso também é treino, quando é parte do plano.',
+  'Ninguém vê o processo. Todo mundo vê o resultado. Confie no processo.',
+  'Progresso de verdade é chato — é repetição, não milagre.',
+  'Seu eu de 6 meses atrás não acreditaria no que você já construiu.',
+  'A diferença entre desistir e continuar é sempre um dia só.',
+  'Recomposição corporal não tem atalho — mas tem consistência, e você tem.',
+  'O que parece lento hoje parece rápido daqui a um ano.',
+  'Ninguém constrói físico em um treino. Constrói em não pular o próximo.',
+  'A régua que importa é a de 90 dias atrás, não a de ontem.',
+  'Disciplina é fazer o combinado mesmo quando o resultado ainda não apareceu.',
+  'Você não está atrasado. Está no meio do processo.',
+  'Cada série é um voto pro corpo que você está construindo.',
+  'O plano só funciona se você confiar nele nos dias ruins também.',
+  'Ganhar músculo é devagar de propósito — é assim que fica.',
+  'A vontade de desistir é normal. Agir sobre ela é a escolha.',
+  'Hoje não precisa ser perfeito. Precisa ser feito.',
+  'Sua constância de hoje é o resultado que você ainda não viu.',
+  'O corpo responde a padrão, não a intensidade isolada.',
+  'Cada semana que você aparece é uma semana que o platô perde força.',
+  'Força vem de repetir o básico bem feito, não de reinventar tudo.',
+  'Você já provou que consegue manter rotina. Continue provando.',
+  'O resultado é a soma de decisões pequenas que ninguém vê.',
+  'Não é sobre motivação constante. É sobre não negociar com a preguiça de hoje.',
+  'A paciência que você tem com o processo é o que separa quem chega de quem desiste.',
+  'Um treino não muda seu corpo. Um padrão de treinos, sim.',
+  'Você não precisa sentir vontade pra fazer o certo. Só precisa fazer.',
+  'O espelho mente no curto prazo. A balança de progresso não mente no longo.',
+  'Cada check-in é um tijolo. Nenhum parece grande sozinho.',
+  'A meta não é nunca falhar. É voltar rápido quando falhar.',
+  'Seu corpo está em obra. Obra tem fase feia antes da fase boa.',
+  'Constância batendo ponto vence intensidade que aparece de vez em quando.',
+  'O que você faz nos dias difíceis define o que você constrói nos dias fáceis.',
+  'Recompor o corpo é redistribuir o que já existe — tem processo, não mágica.',
+  'A dúvida é normal. A pausa é opcional.',
+  'Você não compete com ninguém. Compete com a versão sua de terça passada.',
+  'Ganhar glúteo, perder flanco — os dois pedem a mesma coisa: tempo e repetição.',
+  'O treino de hoje paga o resultado de daqui a 8 semanas, não de amanhã.',
+  'Fazer o suficiente todo dia bate fazer o máximo às vezes.',
+  'Sua rotina não precisa ser admirada. Precisa ser sustentável.',
+  'O corpo não sabe que dia da semana é — só sabe se você apareceu ou não.',
+  'Cada vez que você volta depois de falhar, o hábito fica mais forte, não mais fraco.',
+  'Constância é a habilidade mais subestimada da recomposição corporal.',
+  'Você não precisa se sentir forte pra treinar. Vai sair mais forte por ter treinado.',
+  'O plano é seu. O ritmo é seu. A comparação não serve pra nada aqui.',
+  'Feito é melhor que perfeito, principalmente em dia de pouca energia.',
+  'A frustração com o platô é sinal de que você está prestando atenção — use isso, não desista por causa disso.',
+  'Cada semana que fecha a meta é prova de que o método funciona, não sorte.',
+  'Seu corpo daqui a um ano depende do que você decide hoje, não do que sentiu hoje.',
+  'O trabalho que ninguém vê é o que sustenta o resultado que todo mundo comenta.',
+  'Não é sobre nunca ter um dia ruim. É sobre não deixar um dia ruim virar uma semana ruim.',
+  'A régua de comparação mais justa é você mesmo, três meses atrás.',
+  'Simplicidade sustentada bate complexidade abandonada.',
+  'O corpo é honesto — ele mostra exatamente o que você tem feito, sem enrolação.',
+  'Sua constância de hoje é invisível. Sua constância de 6 meses não vai ser.',
+  'Continuar quando é chato é a parte do treino que realmente separa resultados.',
+  'Você não está construindo um corpo. Está construindo um hábito que constrói um corpo.'
+];
+function phraseOfDay() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now - start;
+  const dayOfYear = Math.floor(diff / 86400000);
+  return PHRASES[dayOfYear % PHRASES.length];
+}
+
+function computeIMC(peso, alturaCm) { const m = alturaCm/100; return peso/(m*m); }
+function classifyIMC(imc) { if (imc < 18.5) return 'Abaixo do peso'; if (imc < 25) return 'Normal'; if (imc < 30) return 'Sobrepeso'; return 'Obesidade'; }
+
+const MEASURE_DIRECTIONS = { peso:'down', braco_relaxado:'up', braco_contraido:'up', peito:'up', cintura:'down', abdomen:'down', quadril:'up', perna:'up', panturrilha:'up' };
+const MEASURE_LABELS = { braco_relaxado:'Braço relaxado', braco_contraido:'Braço contraído', peito:'Peito', cintura:'Cintura', abdomen:'Abdômen', quadril:'Quadril', perna:'Perna', panturrilha:'Panturrilha' };
+const MEASURE_FIELDS = Object.keys(MEASURE_LABELS);
+
+function arrowHTML(field, newVal, oldVal) {
+  if (oldVal === undefined || oldVal === null) return '<span class="arrow-base">(base)</span>';
+  if (newVal === oldVal) return '<span class="arrow-y">= 🟡 igual</span>';
+  const wentUp = newVal > oldVal;
+  const desiredUp = MEASURE_DIRECTIONS[field] === 'up';
+  const good = wentUp === desiredUp;
+  const sym = wentUp ? '↑' : '↓';
+  return good ? `<span class="arrow-g">${sym} 🟢</span>` : `<span class="arrow-r">${sym} 🔴</span>`;
+}
+function prevMeasureValue(sortedAsc, idx, field) {
+  for (let i = idx-1; i >= 0; i--) {
+    if (sortedAsc[i][field] !== undefined && sortedAsc[i][field] !== null && sortedAsc[i][field] !== '') return sortedAsc[i][field];
+  }
+  return null;
+}
+
+function saveAltura() {
+  const v = parseFloat(document.getElementById('alturaInput').value);
+  if (!v || v <= 0) return;
+  saveJSON(SK.altura, v);
+  renderApp();
+}
+function savePesoEntry() {
+  const date = document.getElementById('pesoData').value;
+  const v = parseFloat(document.getElementById('pesoValor').value);
+  if (!date || !v) return;
+  let arr = loadJSON(SK.pesos, []);
+  const idx = arr.findIndex(r => r.date === date);
+  if (idx >= 0) arr[idx].peso = v; else arr.push({date, peso: v});
+  saveJSON(SK.pesos, arr);
+  renderApp();
+}
+function salvarMedidas() {
+  const date = document.getElementById('medData').value;
+  if (!date) return;
+  const newFields = {};
+  MEASURE_FIELDS.forEach(f => {
+    const el = document.getElementById('med_' + f);
+    if (el && el.value !== '') newFields[f] = parseFloat(el.value);
+  });
+  if (Object.keys(newFields).length === 0) return;
+  let arr = loadJSON(SK.medidas, []);
+  const idx = arr.findIndex(r => r.date === date);
+  if (idx >= 0) arr[idx] = {...arr[idx], ...newFields}; else arr.push({date, ...newFields});
+  saveJSON(SK.medidas, arr);
+  renderApp();
+}
+function toggleExerciseCheck(iso, label, name) {
+  let daylog = loadJSON(SK.daylog, {});
+  if (!daylog[iso]) daylog[iso] = { weekday: label, exercises: [], dayCheckedIn: false };
+  const idx = daylog[iso].exercises.indexOf(name);
+  if (idx >= 0) daylog[iso].exercises.splice(idx, 1); else daylog[iso].exercises.push(name);
+  saveJSON(SK.daylog, daylog);
+  renderApp();
+}
+function toggleDayCheckin(iso, label) {
+  let daylog = loadJSON(SK.daylog, {});
+  if (!daylog[iso]) daylog[iso] = { weekday: label, exercises: [], dayCheckedIn: false };
+  daylog[iso].dayCheckedIn = !daylog[iso].dayCheckedIn;
+  saveJSON(SK.daylog, daylog);
+  renderApp();
+}
+
+function pointsOf(rec) {
+  if (!rec) return 0;
+  let p = 0;
+  if (rec.exercises) p += rec.exercises.length * 1000;
+  if (rec.dayCheckedIn) p += 3000;
+  if (rec.extraActivity) p += 1500;
+  return p;
+}
+function toggleExtraActivity(iso, label) {
+  let daylog = loadJSON(SK.daylog, {});
+  if (!daylog[iso]) daylog[iso] = { weekday: label, exercises: [], dayCheckedIn: false, extraActivity: false };
+  daylog[iso].extraActivity = !daylog[iso].extraActivity;
+  saveJSON(SK.daylog, daylog);
+  renderApp();
+}
+
+function renderIMCWeightBox(altura, pesos) {
+  const sortedAsc = [...pesos].sort((a,b) => a.date.localeCompare(b.date));
+  const sortedDesc = [...sortedAsc].reverse();
+  return `<div class="card">
+    <div class="card-title">📈 Evolução Corporal</div>
+    <div class="sub-box">
+      <div class="sub-box-title">📏 Sua altura (usada pro IMC)</div>
+      <div class="altura-row">
+        <input type="number" id="alturaInput" placeholder="cm" value="${altura ? altura : ''}" class="input-sm"/>
+        <button class="btn-save" onclick="saveAltura()">Salvar</button>
+      </div>
+    </div>
+    <div class="sub-box">
+      <div class="sub-box-title">⚖️ Peso</div>
+      <div class="input-row">
+        <input type="date" id="pesoData" value="${todayISO()}" class="input-sm"/>
+        <input type="number" step="0.1" id="pesoValor" placeholder="kg" class="input-sm"/>
+        <button class="btn-save" onclick="savePesoEntry()">Salvar</button>
+      </div>
+      <div class="history-list">
+        ${sortedDesc.length === 0 ? '<p class="hint">Nenhum registro ainda</p>' : sortedDesc.map(entry => {
+          const idx = sortedAsc.findIndex(e => e.date === entry.date);
+          const prev = idx > 0 ? sortedAsc[idx-1].peso : null;
+          const arrow = arrowHTML('peso', entry.peso, prev);
+          let imcTxt = '';
+          if (altura) {
+            const imc = computeIMC(entry.peso, altura);
+            imcTxt = `<div class="imc-inline">IMC ${imc.toFixed(1)} — ${classifyIMC(imc)}</div>`;
+          }
+          return `<div class="history-item"><div class="history-item-top"><span>${fmtDateBR(entry.date)} · ${entry.peso}kg</span><span>${arrow}</span></div>${imcTxt}</div>`;
+        }).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderMedidasBox(medidas) {
+  const sortedAsc = [...medidas].sort((a,b) => a.date.localeCompare(b.date));
+  const sortedDesc = [...sortedAsc].reverse();
+  return `<div class="card">
+    <div class="card-title">📏 Medidas Corporais</div>
+    <p class="card-sub">Todos os campos opcionais — mesma data soma na mesma linha do histórico</p>
+    <div class="input-row"><input type="date" id="medData" value="${todayISO()}" class="input-sm"/></div>
+    <div class="measure-grid">
+      ${MEASURE_FIELDS.map(f => `<input type="number" step="0.1" id="med_${f}" placeholder="${MEASURE_LABELS[f]} (cm)" class="input-measure"/>`).join('')}
+    </div>
+    <button class="btn-save" onclick="salvarMedidas()">+ Salvar medidas</button>
+    <div class="history-list">
+      ${sortedDesc.length === 0 ? '<p class="hint">Nenhum registro ainda</p>' : sortedDesc.map(entry => {
+        const idx = sortedAsc.findIndex(e => e.date === entry.date);
+        const parts = MEASURE_FIELDS.filter(f => entry[f] !== undefined && entry[f] !== null && entry[f] !== '').map(f => {
+          const prev = prevMeasureValue(sortedAsc, idx, f);
+          const arrow = arrowHTML(f, entry[f], prev);
+          return `<div class="measure-line"><span>${MEASURE_LABELS[f]}: ${entry[f]}cm</span>${arrow}</div>`;
+        });
+        return `<div class="history-item"><div class="history-item-top"><strong>${fmtDateBR(entry.date)}</strong></div>${parts.join('')}</div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function renderCheckinBox(daylog) {
+  const iso = todayISO();
+  const label = weekdayLabelFromISO(iso);
+  const dayDef = dayDefByLabel(label);
+  if (!dayDef || dayDef.rest) {
+    const rec = daylog[iso] || { weekday: label, exercises: [], dayCheckedIn: false, extraActivity: false };
+    return `<div class="card">
+      <div class="card-title">✅ Check-in de Hoje <span class="badge bg">${label} · descanso</span></div>
+      <p class="card-sub">${fmtDateBR(iso)} · dia programado de recuperação (lombar e Aquiles agradecem)</p>
+      <button class="checkin-btn enabled" onclick="toggleExtraActivity(${JSON.stringify(iso)},${JSON.stringify(label)})">
+        ${rec.extraActivity ? '✓ ATIVIDADE EXTRA REGISTRADA (toque pra desfazer)' : '✅ FIZ ATIVIDADE EXTRA HOJE (+1.500 pts)'}
+      </button>
+      <p class="hint">Não conta pro streak nem gasta/usa o furo semanal — é só pontos bônus.</p>
+    </div>`;
+  }
+  const allEx = flattenExercises(dayDef);
+  const rec = daylog[iso] || { weekday: label, exercises: [], dayCheckedIn: false };
+  const checkedCount = rec.exercises.length;
+  const total = allEx.length;
+  const required = Math.ceil(total * 0.5);
+  const pct = total ? Math.round(checkedCount/total*100) : 0;
+  const canCheckIn = checkedCount >= required;
+  return `<div class="card">
+    <div class="card-title">✅ Check-in de Hoje <span class="badge bg">${label}</span></div>
+    <p class="card-sub">${fmtDateBR(iso)} · ${dayDef.title}</p>
+    <div class="ex-list">
+      ${allEx.map(name => {
+        const done = rec.exercises.includes(name);
+        return `<div class="ex-wrap${done?' checked-item':''}">
+          <div class="ex" onclick='toggleExerciseCheck(${JSON.stringify(iso)},${JSON.stringify(label)},${JSON.stringify(name)})' style="cursor:pointer">
+            <div class="ex-name">${done?'✅':'⬜'} ${name}</div>
+            <div class="ex-sets"><div class="ex-num">+1.000</div></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="progress-row">
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="progress-label">${checkedCount} / ${total} exercícios (${pct}%) — mínimo ${required} pra liberar o check-in geral</div>
+    </div>
+    <button class="checkin-btn ${rec.dayCheckedIn ? 'enabled' : (canCheckIn ? 'enabled' : 'locked')}" onclick="${canCheckIn ? `toggleDayCheckin(${JSON.stringify(iso)},${JSON.stringify(label)})` : ''}">
+      ${rec.dayCheckedIn ? '✓ TREINO CONCLUÍDO HOJE (toque pra desfazer)' : (canCheckIn ? '✓ CONCLUIR TREINO DE HOJE (+3.000 pts)' : `🔒 CONCLUIR TREINO DE HOJE — faltam ${required-checkedCount} exercício(s)`)}
+    </button>
+  </div>`;
+}
+
+function bucketOfDay(dayOfMonth) { return Math.min(Math.ceil(dayOfMonth/7), 5); }
+function renderDesafiosBox(daylog) {
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth();
+  const monthLabel = capitalize(now.toLocaleDateString('pt-BR', {month:'long', year:'numeric'}));
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const numBuckets = Math.ceil(daysInMonth/7);
+  let weekly = Array(numBuckets).fill(0);
+  let monthTotal = 0;
+  Object.keys(daylog).forEach(iso => {
+    const [yy, mm, dd] = iso.split('-').map(Number);
+    if (yy === y && (mm-1) === m) {
+      const pts = pointsOf(daylog[iso]);
+      monthTotal += pts;
+      weekly[bucketOfDay(dd)-1] += pts;
+    }
+  });
+  const weeklyGoal = 50000, monthGoal = 150000;
+  const monthPct = Math.round(monthTotal/monthGoal*100);
+  return `<div class="card">
+    <div class="card-title">🎯 Desafios do Mês</div>
+    <p class="card-sub">${monthLabel}</p>
+    ${weekly.map((v,i) => {
+      const pct = Math.round(v/weeklyGoal*100);
+      const hit = v >= weeklyGoal;
+      return `<div class="week-challenge-row">
+        <span class="week-label">Sem ${i+1}</span>
+        <div class="week-bar-bg"><div class="week-bar-fill${hit?' hit':''}" style="width:${Math.min(pct,100)}%"></div></div>
+        <span class="week-vals">${hit?'✓ ':''}${Math.round(v/1000)}k/50k · ${pct}%</span>
+      </div>`;
+    }).join('')}
+    <div class="month-goal-box">
+      <div class="month-goal-title">Meta do mês: ${Math.round(monthTotal/1000)}k / 150k pts</div>
+      <div class="month-goal-pct">${monthPct}%</div>
+      <div class="month-goal-sub">${monthTotal>=monthGoal ? 'Meta batida! 🎉' : `faltam ${Math.round((monthGoal-monthTotal)/1000)}k pra bater ${monthLabel}`}</div>
+    </div>
+  </div>`;
+}
+
+function renderHistoricoBox(daylog) {
+  const now = new Date();
+  const curKey = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  let byMonth = {};
+  Object.keys(daylog).forEach(iso => {
+    const key = iso.slice(0,7);
+    if (key === curKey) return;
+    if (!byMonth[key]) byMonth[key] = {checkins:0, points:0};
+    const rec = daylog[iso];
+    byMonth[key].points += pointsOf(rec);
+    if (rec.dayCheckedIn) byMonth[key].checkins++;
+  });
+  const keys = Object.keys(byMonth).sort().reverse();
+  if (keys.length === 0) {
+    return `<div class="card"><div class="card-title">🗓 Histórico Mensal</div><p class="card-sub">Ainda não há meses fechados. Assim que virar o mês, seu resultado aparece aqui.</p></div>`;
+  }
+  return `<div class="card">
+    <div class="card-title">🗓 Histórico Mensal</div>
+    ${keys.map(k => {
+      const d = byMonth[k];
+      const pct = Math.round(d.points/150000*100);
+      const pass = d.points >= 150000;
+      const [yy, mm] = k.split('-');
+      const label = capitalize(new Date(yy, mm-1, 1).toLocaleDateString('pt-BR', {month:'long', year:'numeric'}));
+      return `<div class="history-row">
+        <div class="history-main">${label} — ${d.checkins} check-ins · ${Math.round(d.points/1000)}k pts</div>
+        <div class="history-pct ${pass?'pass':'fail'}">${pass?'✅':'❌'} ${pct}% da meta${pass?' batida':''}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+const MEDAL_TIERS = [
+  {v:10000, icon:'🔥'}, {v:20000, icon:'⭐'}, {v:35000, icon:'🌟'}, {v:50000, icon:'💎'},
+  {v:65000, icon:'💠'}, {v:80000, icon:'🔷'}, {v:100000, icon:'🏆'}, {v:150000, icon:'🎖️'},
+  {v:250000, icon:'👑'}, {v:400000, icon:'🚀'}, {v:600000, icon:'🏅'}, {v:1000000, icon:'💯'}
+];
+function fmtPts(v) { return v >= 1000000 ? (v/1000000) + 'M' : (v/1000) + 'k'; }
+function renderMedalhasBox(total) {
+  return `<div class="card">
+    <div class="card-title">🏅 Medalhas</div>
+    <p class="card-sub">Total acumulado: ${total.toLocaleString('pt-BR')} pts</p>
+    <div class="medal-grid">
+      ${MEDAL_TIERS.map(t => {
+        const unlocked = total >= t.v;
+        return `<div class="medal${unlocked?' unlocked':''}"><div class="medal-icon">${t.icon}</div><div class="medal-label">${fmtPts(t.v)}</div></div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+function renderPerfil() {
+  const altura = loadJSON(SK.altura, null);
+  const pesos = loadJSON(SK.pesos, []);
+  const medidas = loadJSON(SK.medidas, []);
+  const daylog = loadJSON(SK.daylog, {});
+  let totalPoints = 0;
+  Object.values(daylog).forEach(rec => totalPoints += pointsOf(rec));
+
+  document.getElementById('content').innerHTML =
+    renderIMCWeightBox(altura, pesos) +
+    renderMedidasBox(medidas) +
+    renderCheckinBox(daylog) +
+    renderDesafiosBox(daylog) +
+    renderHistoricoBox(daylog) +
+    renderMedalhasBox(totalPoints);
+}
+
+/* ===== Home / navegação entre views ===== */
+function fmtK(v) { return v >= 1000 ? (v/1000).toFixed(v%1000===0?0:1) + 'k' : v; }
+function homeHTML() {
+  const daylog = loadJSON(SK.daylog, {});
+  const { streak, furoAvailable } = computeStreak(daylog);
+  const todayPts = pointsOf(daylog[todayISO()]);
+  let totalPoints = 0;
+  Object.values(daylog).forEach(rec => totalPoints += pointsOf(rec));
+  const medalsCount = MEDAL_TIERS.filter(t => totalPoints >= t.v).length;
+  const now = new Date();
+  const dateLabel = capitalize(now.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long', year:'numeric'}));
+  return `
+  <div class="home-wrap">
+    <p class="home-greet">BEM-VINDO DE VOLTA</p>
+    <h1 class="home-name">Fernando</h1>
+    <div class="home-name-underline"></div>
+    <p class="home-date">${dateLabel}</p>
+    <div class="home-stats-row">
+      <div class="home-stat"><div class="home-stat-icon">🔥</div><div class="home-stat-val">${streak} dia${streak===1?'':'s'}</div></div>
+      <div class="home-stat"><div class="home-stat-icon">⚡</div><div class="home-stat-val">${fmtK(todayPts)} hoje</div></div>
+      <div class="home-stat"><div class="home-stat-icon">🏆</div><div class="home-stat-val">${medalsCount} medalha${medalsCount===1?'':'s'}</div></div>
+    </div>
+    <p class="home-furo-note">${furoAvailable ? '🟢 furo disponível essa semana' : '🔴 furo já usado essa semana'}</p>
+    <div class="home-quote-box">
+      <div class="home-quote-mark">"</div>
+      <p class="home-quote-text">${phraseOfDay()}</p>
+      <p class="home-quote-label">— frase do dia</p>
+    </div>
+    <button class="home-option home-option-treino" onclick="goTo('treino')">
+      <span class="home-option-icon">🏋️</span>
+      <span class="home-option-text"><span class="home-option-title">TREINO</span><span class="home-option-sub">seus dias da semana</span></span>
+      <span class="home-option-arrow">→</span>
+    </button>
+    <button class="home-option home-option-perfil" onclick="goTo('perfil')">
+      <span class="home-option-icon">★</span>
+      <span class="home-option-text"><span class="home-option-title">PERFIL</span><span class="home-option-sub">evolução, check-in, desafios e medalhas</span></span>
+      <span class="home-option-arrow">→</span>
+    </button>
+  </div>`;
+}
+function treinoShellHTML() {
+  return `
+    <button class="back-btn" onclick="goHome()">← Início</button>
+    <h1>Rotina de treino <span class="version-tag">v4</span></h1>
+    <p class="created-date">Criada em 31/07/2026</p>
+    ${WEEKLY_OVERVIEW_HTML}
+    <div class="nav" id="nav"></div>
+    <div id="content"></div>
+    ${STATS_HTML}`;
+}
+function perfilShellHTML() {
+  return `<button class="back-btn" onclick="goHome()">← Início</button><div id="content"></div>`;
+}
+function goTo(v) { view = v; renderApp(); }
+function goHome() { view = 'home'; renderApp(); }
+function renderApp() {
+  const app = document.getElementById('app');
+  if (view === 'home') { app.innerHTML = homeHTML(); return; }
+  if (view === 'treino') { app.innerHTML = treinoShellHTML(); renderTreinoContent(); return; }
+  if (view === 'perfil') { app.innerHTML = perfilShellHTML(); renderPerfil(); return; }
+}
+
+renderApp();
 </script>
 </body>
 </html>
