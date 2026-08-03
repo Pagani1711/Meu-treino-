@@ -684,7 +684,7 @@ function renderCheckinBox(daylog) {
     return `<div class="card">
       <div class="card-title">✅ Check-in de Hoje <span class="badge bg">${label} · descanso</span></div>
       <p class="card-sub">${fmtDateBR(iso)} · dia programado de recuperação (lombar e Aquiles agradecem)</p>
-      <button class="checkin-btn enabled" onclick="toggleExtraActivity(${JSON.stringify(iso)},${JSON.stringify(label)})">
+      <button class="checkin-btn enabled" onclick='toggleExtraActivity(${JSON.stringify(iso)},${JSON.stringify(label)})'>
         ${rec.extraActivity ? '✓ ATIVIDADE EXTRA REGISTRADA (toque pra desfazer)' : '✅ FIZ ATIVIDADE EXTRA HOJE (+1.500 pts)'}
       </button>
       <p class="hint">Não conta pro streak nem gasta/usa o furo semanal — é só pontos bônus.</p>
@@ -715,7 +715,7 @@ function renderCheckinBox(daylog) {
       <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
       <div class="progress-label">${checkedCount} / ${total} exercícios (${pct}%) — mínimo ${required} pra liberar o check-in geral</div>
     </div>
-    <button class="checkin-btn ${rec.dayCheckedIn ? 'enabled' : (canCheckIn ? 'enabled' : 'locked')}" onclick="${canCheckIn ? `toggleDayCheckin(${JSON.stringify(iso)},${JSON.stringify(label)})` : ''}">
+    <button class="checkin-btn ${rec.dayCheckedIn ? 'enabled' : (canCheckIn ? 'enabled' : 'locked')}" onclick='${canCheckIn ? `toggleDayCheckin(${JSON.stringify(iso)},${JSON.stringify(label)})` : ''}'>
       ${rec.dayCheckedIn ? '✓ TREINO CONCLUÍDO HOJE (toque pra desfazer)' : (canCheckIn ? '✓ CONCLUIR TREINO DE HOJE (+3.000 pts)' : `🔒 CONCLUIR TREINO DE HOJE — faltam ${required-checkedCount} exercício(s)`)}
     </button>
   </div>`;
