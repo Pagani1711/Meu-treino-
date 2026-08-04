@@ -169,6 +169,10 @@ h1 { font-size: 19px; font-weight: 700; margin-bottom: 3px; }
 .ex-weight-row { padding: 0 11px 10px; }
 .ex-weight-hint { font-size: 10px; color: #888; margin-bottom: 5px; }
 .input-weight { width: 100px; padding: 6px 9px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; background: #fff; }
+.ex-weight-input-row { display: flex; gap: 6px; align-items: center; }
+.btn-weight-save { padding: 6px 12px; border-radius: 6px; border: none; background: #3C3489; color: #fff; font-size: 11px; font-weight: 700; cursor: pointer; }
+.btn-weight-save:hover { background: #2d2769; }
+.ex-checkbox { margin-right: 7px; cursor: pointer; }
 .history-toggle { display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 700; color: #3C3489; cursor: pointer; background: none; border: none; padding: 0; }
 </style>
 </head>
@@ -349,11 +353,12 @@ function ytLink(name) {
 function renderEx(e, dayLabel, isToday, daylog) {
   const id = 'ex' + (uid++);
   const hasDetail = !!e.howto;
+  const iso = todayISO();
+  const rec = daylog[iso] || { exercises: [] };
+  const done = isToday && rec.exercises && rec.exercises.includes(e.n);
   const showWeight = isToday && e.type !== 'core';
   let weightBlock = '';
   if (showWeight) {
-    const iso = todayISO();
-    const rec = daylog[iso] || {};
     const currentW = (rec.weights && rec.weights[e.n]) || '';
     const lastW = lastWeightFor(e.n, daylog, iso);
     const pr = prFor(e.n, daylog);
@@ -361,13 +366,17 @@ function renderEx(e, dayLabel, isToday, daylog) {
     const hint = (lastW || pr) ? `<div class="ex-weight-hint">${lastW?`Última: ${lastW}kg`:''}${sugg?` · Tente: ${sugg}kg`:''}${pr?` · 🏆 PR: ${pr}kg`:''}</div>` : '';
     weightBlock = `<div class="ex-weight-row">
       ${hint}
-      <input type="number" step="0.5" value="${currentW}" placeholder="kg hoje" class="input-weight" onclick="event.stopPropagation()" onchange='saveExerciseWeight(${JSON.stringify(iso)},${JSON.stringify(dayLabel)},${JSON.stringify(e.n)},parseFloat(this.value)); renderApp();'/>
+      <div class="ex-weight-input-row">
+        <input type="number" step="0.5" value="${currentW}" placeholder="kg hoje" class="input-weight" id="${id}_w" onclick="event.stopPropagation()"/>
+        <button class="btn-weight-save" onclick='event.stopPropagation(); saveExerciseWeightFromInput(${JSON.stringify(id+"_w")}, ${JSON.stringify(iso)}, ${JSON.stringify(dayLabel)}, ${JSON.stringify(e.n)})'>✓ Salvar</button>
+      </div>
     </div>`;
   }
-  return `<div class="ex-wrap${exClass[e.type]||''}${e.isNew?' new-item':''}">
+  const checkboxHTML = isToday ? `<span class="ex-checkbox" onclick='event.stopPropagation(); toggleExerciseCheck(${JSON.stringify(iso)},${JSON.stringify(dayLabel)},${JSON.stringify(e.n)})'>${done?'✅':'⬜'}</span>` : '';
+  return `<div class="ex-wrap${exClass[e.type]||''}${e.isNew?' new-item':''}${done?' checked-item':''}">
     <div class="ex" ${hasDetail?`onclick="toggleEx('${id}')"`:''}>
       <div>
-        <div class="ex-name">${e.n}</div>
+        <div class="ex-name">${checkboxHTML}${e.n}</div>
         <div class="ex-note">${e.o}</div>
         <span class="ex-chip${chipClass[e.type]||''}">${chipLabel[e.type]||'máquina'}</span>
         ${e.isNew?'<span class="ex-chip new-chip">novo v4</span>':''}
@@ -383,6 +392,14 @@ function renderEx(e, dayLabel, isToday, daylog) {
   </div>`;
 }
 
+function saveExerciseWeightFromInput(inputId, iso, label, name) {
+  const el = document.getElementById(inputId);
+  if (!el) return;
+  const v = parseFloat(el.value);
+  saveExerciseWeight(iso, label, name, v);
+  renderApp();
+}
+
 function toggleEx(id) {
   document.getElementById(id).classList.toggle('open');
 }
@@ -393,12 +410,21 @@ function renderTreinoContent() {
   ).join('');
 
   const d = days[active];
+  const daylog = loadJSON(SK.daylog, {});
+  const iso = todayISO();
+  const isToday = d.label === weekdayLabelFromISO(iso);
+
   if (d.rest) {
-    document.getElementById('content').innerHTML = `<div class="card"><div class="rest-box"><div style="font-size:28px;margin-bottom:8px">🌙</div><div class="rest-txt">Dia de descanso</div><div class="rest-sub">Caminhada leve, alongamento ou mobilidade articular</div></div></div>`;
+    const rec = daylog[iso] || { extraActivity: false };
+    const extraBlock = isToday ? `
+      <button class="checkin-btn enabled" style="margin-top:16px" onclick='toggleExtraActivity(${JSON.stringify(iso)},${JSON.stringify(d.label)})'>
+        ${rec.extraActivity ? '✓ ATIVIDADE EXTRA REGISTRADA (toque pra desfazer)' : '✅ FIZ ATIVIDADE EXTRA HOJE (+1.500 pts)'}
+      </button>
+      <p class="hint" style="text-align:center">Não conta pro streak nem usa o furo semanal — é só pontos bônus.</p>` : '';
+    document.getElementById('content').innerHTML = `<div class="card"><div class="rest-box"><div style="font-size:28px;margin-bottom:8px">🌙</div><div class="rest-txt">Dia de descanso</div><div class="rest-sub">Caminhada leve, alongamento ou mobilidade articular</div></div>${extraBlock}</div>`;
     return;
   }
-  const daylog = loadJSON(SK.daylog, {});
-  const isToday = d.label === weekdayLabelFromISO(todayISO());
+
   uid = 0;
   let exHTML = '';
   if (d.sections) {
@@ -406,15 +432,36 @@ function renderTreinoContent() {
       exHTML += `<div class="section-sep">${sec.title}</div><div class="ex-list">${sec.exs.map(e => renderEx(e, d.label, isToday, daylog)).join('')}</div>`;
     });
   }
+
+  let checkinBlock = '';
+  if (isToday) {
+    const allEx = flattenExercises(d);
+    const rec = daylog[iso] || { exercises: [], dayCheckedIn: false };
+    const checkedCount = rec.exercises.length;
+    const total = allEx.length;
+    const required = Math.ceil(total * 0.5);
+    const pct = total ? Math.round(checkedCount/total*100) : 0;
+    const canCheckIn = checkedCount >= required;
+    checkinBlock = `
+      <div class="progress-row">
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="progress-label">${checkedCount} / ${total} exercícios (${pct}%) — mínimo ${required} pra liberar o check-in geral</div>
+      </div>
+      <button class="checkin-btn ${rec.dayCheckedIn ? 'enabled' : (canCheckIn ? 'enabled' : 'locked')}" onclick='${canCheckIn ? `toggleDayCheckin(${JSON.stringify(iso)},${JSON.stringify(d.label)})` : ''}'>
+        ${rec.dayCheckedIn ? '✓ TREINO CONCLUÍDO HOJE (toque pra desfazer)' : (canCheckIn ? '✓ CONCLUIR TREINO DE HOJE (+3.000 pts)' : `🔒 CONCLUIR TREINO DE HOJE — faltam ${required-checkedCount} exercício(s)`)}
+      </button>`;
+  }
+
   document.getElementById('content').innerHTML = `
     <div class="card">
       <div class="card-header">
         <div class="card-title">${d.title} <span class="badge ${badgeClass[d.badge]}">${d.bl}</span></div>
         <span class="time-tag${d.long?' long':''}">${d.time}</span>
       </div>
-      ${!isToday?`<div class="alert"><div class="alert-title">ℹ Info</div><p>Registro de carga só fica ativo no dia de hoje. Isso aqui é só consulta.</p></div>`:''}
+      ${!isToday?`<div class="alert"><div class="alert-title">ℹ Info</div><p>Isso aqui é só consulta — carga e check-in só ficam ativos no dia de hoje.</p></div>`:''}
       ${d.alert?`<div class="alert"><div class="alert-title">ℹ Info</div><p>${d.alert}</p></div>`:''}
       ${exHTML}
+      ${checkinBlock}
       <div class="tips"><div class="tips-title">💡 Dicas do dia</div><ul>${d.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>
     </div>`;
 }
@@ -982,7 +1029,6 @@ function renderPerfil() {
   document.getElementById('content').innerHTML =
     renderIMCWeightBox(altura, pesos) +
     renderMedidasBox(medidas) +
-    renderCheckinBox(daylog) +
     renderDesafiosBox(daylog) +
     renderHistoricoBox(daylog) +
     renderMedalhasBox(totalPoints) +
