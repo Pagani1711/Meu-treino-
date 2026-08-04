@@ -164,6 +164,12 @@ h1 { font-size: 19px; font-weight: 700; margin-bottom: 3px; }
 .btn-save-red { background: #c0392b; margin-top: 8px; }
 .btn-save-red:hover { background: #9e2e21; }
 .backup-textarea { width: 100%; min-height: 90px; padding: 9px; border-radius: 8px; border: 1px solid #ccc; font-size: 11px; font-family: 'SF Mono', Consolas, monospace; background: #fff; resize: vertical; }
+
+/* ===== Carga por exercício ===== */
+.ex-weight-row { padding: 0 11px 10px; }
+.ex-weight-hint { font-size: 10px; color: #888; margin-bottom: 5px; }
+.input-weight { width: 100px; padding: 6px 9px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; background: #fff; }
+.history-toggle { display: inline-block; margin-top: 6px; font-size: 11px; font-weight: 700; color: #3C3489; cursor: pointer; background: none; border: none; padding: 0; }
 </style>
 </head>
 <body>
@@ -340,9 +346,24 @@ function ytLink(name) {
   return `<a class="yt-link" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ Ver execução no YouTube</a>`;
 }
 
-function renderEx(e) {
+function renderEx(e, dayLabel, isToday, daylog) {
   const id = 'ex' + (uid++);
   const hasDetail = !!e.howto;
+  const showWeight = isToday && e.type !== 'core';
+  let weightBlock = '';
+  if (showWeight) {
+    const iso = todayISO();
+    const rec = daylog[iso] || {};
+    const currentW = (rec.weights && rec.weights[e.n]) || '';
+    const lastW = lastWeightFor(e.n, daylog, iso);
+    const pr = prFor(e.n, daylog);
+    const sugg = suggestedWeight(lastW);
+    const hint = (lastW || pr) ? `<div class="ex-weight-hint">${lastW?`Última: ${lastW}kg`:''}${sugg?` · Tente: ${sugg}kg`:''}${pr?` · 🏆 PR: ${pr}kg`:''}</div>` : '';
+    weightBlock = `<div class="ex-weight-row">
+      ${hint}
+      <input type="number" step="0.5" value="${currentW}" placeholder="kg hoje" class="input-weight" onclick="event.stopPropagation()" onchange='saveExerciseWeight(${JSON.stringify(iso)},${JSON.stringify(dayLabel)},${JSON.stringify(e.n)},parseFloat(this.value)); renderApp();'/>
+    </div>`;
+  }
   return `<div class="ex-wrap${exClass[e.type]||''}${e.isNew?' new-item':''}">
     <div class="ex" ${hasDetail?`onclick="toggleEx('${id}')"`:''}>
       <div>
@@ -354,6 +375,7 @@ function renderEx(e) {
       </div>
       <div class="ex-sets"><div class="ex-num">${e.s} ${e.r}</div><div class="ex-lbl">séries · reps</div></div>
     </div>
+    ${weightBlock}
     ${hasDetail?`<div class="ex-detail" id="${id}">
       <div class="ex-detail-title">Como executar</div><ol class="ex-steps">${e.howto.map((s,i)=>`<li data-i="${i+1}.">${s}</li>`).join('')}</ol>
       ${ytLink(e.n)}
@@ -375,11 +397,13 @@ function renderTreinoContent() {
     document.getElementById('content').innerHTML = `<div class="card"><div class="rest-box"><div style="font-size:28px;margin-bottom:8px">🌙</div><div class="rest-txt">Dia de descanso</div><div class="rest-sub">Caminhada leve, alongamento ou mobilidade articular</div></div></div>`;
     return;
   }
+  const daylog = loadJSON(SK.daylog, {});
+  const isToday = d.label === weekdayLabelFromISO(todayISO());
   uid = 0;
   let exHTML = '';
   if (d.sections) {
     d.sections.forEach(sec => {
-      exHTML += `<div class="section-sep">${sec.title}</div><div class="ex-list">${sec.exs.map(renderEx).join('')}</div>`;
+      exHTML += `<div class="section-sep">${sec.title}</div><div class="ex-list">${sec.exs.map(e => renderEx(e, d.label, isToday, daylog)).join('')}</div>`;
     });
   }
   document.getElementById('content').innerHTML = `
@@ -388,6 +412,7 @@ function renderTreinoContent() {
         <div class="card-title">${d.title} <span class="badge ${badgeClass[d.badge]}">${d.bl}</span></div>
         <span class="time-tag${d.long?' long':''}">${d.time}</span>
       </div>
+      ${!isToday?`<div class="alert"><div class="alert-title">ℹ Info</div><p>Registro de carga só fica ativo no dia de hoje. Isso aqui é só consulta.</p></div>`:''}
       ${d.alert?`<div class="alert"><div class="alert-title">ℹ Info</div><p>${d.alert}</p></div>`:''}
       ${exHTML}
       <div class="tips"><div class="tips-title">💡 Dicas do dia</div><ul>${d.tips.map(t=>`<li>${t}</li>`).join('')}</ul></div>
@@ -410,7 +435,7 @@ function dayDefByLabel(label) { return days.find(d => d.label === label); }
 function flattenExercises(dayDef) {
   if (!dayDef || dayDef.rest) return [];
   let list = [];
-  dayDef.sections.forEach(sec => sec.exs.forEach(e => list.push(e.n)));
+  dayDef.sections.forEach(sec => sec.exs.forEach(e => list.push({name: e.n, type: e.type})));
   return list;
 }
 
@@ -545,7 +570,7 @@ const MEASURE_FIELDS = Object.keys(MEASURE_LABELS);
 
 function arrowHTML(field, newVal, oldVal) {
   if (oldVal === undefined || oldVal === null) return '<span class="arrow-base">(base)</span>';
-  if (newVal === oldVal) return '<span class="arrow-y">= 🟡 igual</span>';
+  if (newVal === oldVal) return '<span class="arrow-y">= 🟡</span>';
   const wentUp = newVal > oldVal;
   const desiredUp = MEASURE_DIRECTIONS[field] === 'up';
   const good = wentUp === desiredUp;
@@ -613,6 +638,33 @@ function pointsOf(rec) {
   if (rec.dayCheckedIn) p += 3000;
   if (rec.extraActivity) p += 1500;
   return p;
+}
+
+/* ===== Carga por exercício (histórico, PR, sugestão) ===== */
+function saveExerciseWeight(iso, label, name, weight) {
+  if (!weight || isNaN(weight) || weight <= 0) return;
+  let daylog = loadJSON(SK.daylog, {});
+  if (!daylog[iso]) daylog[iso] = { weekday: label, exercises: [], dayCheckedIn: false };
+  if (!daylog[iso].weights) daylog[iso].weights = {};
+  daylog[iso].weights[name] = weight;
+  saveJSON(SK.daylog, daylog);
+}
+function weightHistoryFor(name, daylog) {
+  return Object.keys(daylog).filter(iso => daylog[iso].weights && daylog[iso].weights[name] !== undefined)
+    .sort().map(iso => ({date: iso, weight: daylog[iso].weights[name]}));
+}
+function lastWeightFor(name, daylog, beforeISO) {
+  const hist = weightHistoryFor(name, daylog).filter(h => !beforeISO || h.date < beforeISO);
+  return hist.length ? hist[hist.length-1].weight : null;
+}
+function prFor(name, daylog) {
+  const hist = weightHistoryFor(name, daylog);
+  if (!hist.length) return null;
+  return Math.max(...hist.map(h => h.weight));
+}
+function suggestedWeight(lastW) {
+  if (!lastW) return null;
+  return Math.round((lastW + 2.5) * 2) / 2;
 }
 function toggleExtraActivity(iso, label) {
   let daylog = loadJSON(SK.daylog, {});
@@ -695,9 +747,15 @@ function renderBackupBox() {
   </div>`;
 }
 
+let expandPeso = false;
+let expandMedidas = false;
+function toggleExpandPeso() { expandPeso = !expandPeso; renderApp(); }
+function toggleExpandMedidas() { expandMedidas = !expandMedidas; renderApp(); }
+
 function renderIMCWeightBox(altura, pesos) {
   const sortedAsc = [...pesos].sort((a,b) => a.date.localeCompare(b.date));
   const sortedDesc = [...sortedAsc].reverse();
+  const visible = expandPeso ? sortedDesc : sortedDesc.slice(0,3);
   return `<div class="card">
     <div class="card-title">📈 Evolução Corporal</div>
     <div class="sub-box">
@@ -715,7 +773,7 @@ function renderIMCWeightBox(altura, pesos) {
         <button class="btn-save" onclick="savePesoEntry()">Salvar</button>
       </div>
       <div class="history-list">
-        ${sortedDesc.length === 0 ? '<p class="hint">Nenhum registro ainda</p>' : sortedDesc.map(entry => {
+        ${sortedDesc.length === 0 ? '<p class="hint">Nenhum registro ainda</p>' : visible.map(entry => {
           const idx = sortedAsc.findIndex(e => e.date === entry.date);
           const prev = idx > 0 ? sortedAsc[idx-1].peso : null;
           const arrow = arrowHTML('peso', entry.peso, prev);
@@ -727,6 +785,7 @@ function renderIMCWeightBox(altura, pesos) {
           return `<div class="history-item"><div class="history-item-top"><span>${fmtDateBR(entry.date)} · ${entry.peso}kg</span><span>${arrow}</span></div>${imcTxt}</div>`;
         }).join('')}
       </div>
+      ${sortedDesc.length > 3 ? `<button class="history-toggle" onclick="toggleExpandPeso()">${expandPeso ? '▲ Recolher' : `▼ Ver tudo (${sortedDesc.length})`}</button>` : ''}
     </div>
   </div>`;
 }
@@ -734,6 +793,7 @@ function renderIMCWeightBox(altura, pesos) {
 function renderMedidasBox(medidas) {
   const sortedAsc = [...medidas].sort((a,b) => a.date.localeCompare(b.date));
   const sortedDesc = [...sortedAsc].reverse();
+  const visible = expandMedidas ? sortedDesc : sortedDesc.slice(0,3);
   return `<div class="card">
     <div class="card-title">📏 Medidas Corporais</div>
     <p class="card-sub">Todos os campos opcionais — mesma data soma na mesma linha do histórico</p>
@@ -743,7 +803,7 @@ function renderMedidasBox(medidas) {
     </div>
     <button class="btn-save" onclick="salvarMedidas()">+ Salvar medidas</button>
     <div class="history-list">
-      ${sortedDesc.length === 0 ? '<p class="hint">Nenhum registro ainda</p>' : sortedDesc.map(entry => {
+      ${sortedDesc.length === 0 ? '<p class="hint">Nenhum registro ainda</p>' : visible.map(entry => {
         const idx = sortedAsc.findIndex(e => e.date === entry.date);
         const parts = MEASURE_FIELDS.filter(f => entry[f] !== undefined && entry[f] !== null && entry[f] !== '').map(f => {
           const prev = prevMeasureValue(sortedAsc, idx, f);
@@ -753,6 +813,7 @@ function renderMedidasBox(medidas) {
         return `<div class="history-item"><div class="history-item-top"><strong>${fmtDateBR(entry.date)}</strong></div>${parts.join('')}</div>`;
       }).join('')}
     </div>
+    ${sortedDesc.length > 3 ? `<button class="history-toggle" onclick="toggleExpandMedidas()">${expandMedidas ? '▲ Recolher' : `▼ Ver tudo (${sortedDesc.length})`}</button>` : ''}
   </div>`;
 }
 
@@ -780,9 +841,10 @@ function renderCheckinBox(daylog) {
   const canCheckIn = checkedCount >= required;
   return `<div class="card">
     <div class="card-title">✅ Check-in de Hoje <span class="badge bg">${label}</span></div>
-    <p class="card-sub">${fmtDateBR(iso)} · ${dayDef.title}</p>
+    <p class="card-sub">${fmtDateBR(iso)} · ${dayDef.title} · registre a carga na aba Treino</p>
     <div class="ex-list">
-      ${allEx.map(name => {
+      ${allEx.map(ex => {
+        const name = ex.name;
         const done = rec.exercises.includes(name);
         return `<div class="ex-wrap${done?' checked-item':''}">
           <div class="ex" onclick='toggleExerciseCheck(${JSON.stringify(iso)},${JSON.stringify(label)},${JSON.stringify(name)})' style="cursor:pointer">
@@ -892,6 +954,23 @@ function renderMedalhasBox(total) {
   </div>`;
 }
 
+function renderRecordesBox(daylog) {
+  let allNames = new Set();
+  days.forEach(d => { if (!d.rest) flattenExercises(d).forEach(e => { if (e.type !== 'core') allNames.add(e.name); }); });
+  const records = [...allNames].map(name => ({name, pr: prFor(name, daylog), last: lastWeightFor(name, daylog, null)}))
+    .filter(r => r.pr !== null)
+    .sort((a,b) => b.pr - a.pr);
+  if (records.length === 0) {
+    return `<div class="card"><div class="card-title">🏆 Recordes Pessoais</div><p class="card-sub">Registre carga nos exercícios do check-in pra começar a ver seus PRs aqui.</p></div>`;
+  }
+  return `<div class="card">
+    <div class="card-title">🏆 Recordes Pessoais</div>
+    <div class="history-list">
+      ${records.map(r => `<div class="history-item"><div class="history-item-top"><span>${r.name}</span><span style="font-weight:700;color:#854F0B">${r.pr}kg</span></div></div>`).join('')}
+    </div>
+  </div>`;
+}
+
 function renderPerfil() {
   const altura = loadJSON(SK.altura, null);
   const pesos = loadJSON(SK.pesos, []);
@@ -907,6 +986,7 @@ function renderPerfil() {
     renderDesafiosBox(daylog) +
     renderHistoricoBox(daylog) +
     renderMedalhasBox(totalPoints) +
+    renderRecordesBox(daylog) +
     renderBackupBox();
 }
 
@@ -921,6 +1001,13 @@ function homeHTML() {
   const medalsCount = MEDAL_TIERS.filter(t => totalPoints >= t.v).length;
   const now = new Date();
   const dateLabel = capitalize(now.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long', year:'numeric'}));
+  const wk = weekKey(now);
+  let weekWeightTotal = 0;
+  Object.keys(daylog).forEach(iso => {
+    if (weekKey(new Date(iso+'T00:00:00')) === wk && daylog[iso].weights) {
+      Object.values(daylog[iso].weights).forEach(w => weekWeightTotal += w);
+    }
+  });
   return `
   <div class="home-wrap">
     <p class="home-greet">BEM-VINDO DE VOLTA</p>
@@ -931,6 +1018,9 @@ function homeHTML() {
       <div class="home-stat"><div class="home-stat-icon">🔥</div><div class="home-stat-val">${streak} dia${streak===1?'':'s'}</div></div>
       <div class="home-stat"><div class="home-stat-icon">⚡</div><div class="home-stat-val">${fmtK(todayPts)} hoje</div></div>
       <div class="home-stat"><div class="home-stat-icon">🏆</div><div class="home-stat-val">${medalsCount} medalha${medalsCount===1?'':'s'}</div></div>
+    </div>
+    <div class="home-stats-row">
+      <div class="home-stat" style="flex:1"><div class="home-stat-icon">🏋️</div><div class="home-stat-val">${weekWeightTotal.toLocaleString('pt-BR')}kg somados essa semana</div></div>
     </div>
     <p class="home-furo-note">${furoAvailable ? '🟢 furo disponível essa semana' : '🔴 furo já usado essa semana'}</p>
     <div class="home-quote-box">
