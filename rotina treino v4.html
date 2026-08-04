@@ -156,6 +156,14 @@ h1 { font-size: 19px; font-weight: 700; margin-bottom: 3px; }
 .home-option-arrow { font-size: 18px; }
 .home-option-treino .home-option-arrow { color: #3C3489; }
 .home-option-perfil .home-option-arrow { color: #6b3f00; }
+
+/* ===== Backup ===== */
+.backup-btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-save-green { background: #0F6E56; }
+.btn-save-green:hover { background: #0b5443; }
+.btn-save-red { background: #c0392b; margin-top: 8px; }
+.btn-save-red:hover { background: #9e2e21; }
+.backup-textarea { width: 100%; min-height: 90px; padding: 9px; border-radius: 8px; border: 1px solid #ccc; font-size: 11px; font-family: 'SF Mono', Consolas, monospace; background: #fff; resize: vertical; }
 </style>
 </head>
 <body>
@@ -614,6 +622,79 @@ function toggleExtraActivity(iso, label) {
   renderApp();
 }
 
+/* ===== Backup / Restauração ===== */
+function getBackupObject() {
+  return {
+    app: 'rotina-treino-v4',
+    exportedAt: new Date().toISOString(),
+    altura: loadJSON(SK.altura, null),
+    pesos: loadJSON(SK.pesos, []),
+    medidas: loadJSON(SK.medidas, []),
+    daylog: loadJSON(SK.daylog, {})
+  };
+}
+function setBackupStatus(msg) {
+  const el = document.getElementById('backupStatus');
+  if (el) el.textContent = msg;
+}
+function copyBackup() {
+  const data = JSON.stringify(getBackupObject(), null, 2);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(data).then(() => {
+      setBackupStatus('✅ Copiado! Cole em Notas, e-mail pra si mesmo, ou onde preferir guardar.');
+    }).catch(() => {
+      setBackupStatus('⚠️ Não consegui copiar automático — usa o botão "Baixar arquivo" abaixo.');
+    });
+  } else {
+    setBackupStatus('⚠️ Seu navegador não permite copiar direto — usa o botão "Baixar arquivo" abaixo.');
+  }
+}
+function downloadBackup() {
+  const data = JSON.stringify(getBackupObject(), null, 2);
+  const blob = new Blob([data], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'backup-treino-' + todayISO() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  setBackupStatus('✅ Arquivo baixado — salva ele nos Arquivos do seu celular ou num drive.');
+}
+function restoreBackup() {
+  const el = document.getElementById('restoreInput');
+  const txt = el ? el.value.trim() : '';
+  if (!txt) { setBackupStatus('⚠️ Cole o texto do backup antes de restaurar.'); return; }
+  try {
+    const obj = JSON.parse(txt);
+    if (obj.altura !== undefined && obj.altura !== null) saveJSON(SK.altura, obj.altura);
+    if (obj.pesos) saveJSON(SK.pesos, obj.pesos);
+    if (obj.medidas) saveJSON(SK.medidas, obj.medidas);
+    if (obj.daylog) saveJSON(SK.daylog, obj.daylog);
+    setBackupStatus('✅ Restaurado com sucesso! Atualizando a tela...');
+    setTimeout(() => renderApp(), 700);
+  } catch (e) {
+    setBackupStatus('❌ Não consegui ler esse texto — confirma que colou o backup completo, sem cortar nada.');
+  }
+}
+function renderBackupBox() {
+  return `<div class="card">
+    <div class="card-title">💾 Backup e Restauração</div>
+    <p class="card-sub">Guarda seus dados fora do navegador — protege contra troca de aparelho, limpeza de cache ou qualquer imprevisto.</p>
+    <div class="backup-btn-row">
+      <button class="btn-save" onclick="copyBackup()">📋 Copiar backup</button>
+      <button class="btn-save btn-save-green" onclick="downloadBackup()">⬇️ Baixar arquivo</button>
+    </div>
+    <p id="backupStatus" class="hint"></p>
+    <div class="sub-box" style="margin-top:12px">
+      <div class="sub-box-title">📥 Restaurar backup</div>
+      <textarea id="restoreInput" class="backup-textarea" placeholder="Cole aqui o conteúdo do backup (JSON)"></textarea>
+      <button class="btn-save btn-save-red" onclick="restoreBackup()">⚠️ Restaurar (substitui os dados atuais)</button>
+    </div>
+  </div>`;
+}
+
 function renderIMCWeightBox(altura, pesos) {
   const sortedAsc = [...pesos].sort((a,b) => a.date.localeCompare(b.date));
   const sortedDesc = [...sortedAsc].reverse();
@@ -825,7 +906,8 @@ function renderPerfil() {
     renderCheckinBox(daylog) +
     renderDesafiosBox(daylog) +
     renderHistoricoBox(daylog) +
-    renderMedalhasBox(totalPoints);
+    renderMedalhasBox(totalPoints) +
+    renderBackupBox();
 }
 
 /* ===== Home / navegação entre views ===== */
