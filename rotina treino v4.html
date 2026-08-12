@@ -115,7 +115,7 @@ h1 { font-size: 19px; font-weight: 700; margin-bottom: 3px; }
 .checkin-btn.enabled { background: #F0F7E6; color: #3A6B1A; border: 1px solid #3A6B1A; }
 .checked-item { background: #DCE8DE; }
 .week-challenge-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 11px; }
-.week-label { width: 42px; color: #666; font-weight: 600; }
+.week-label { width: 50px; color: #666; font-weight: 600; line-height: 1.5; }
 .week-bar-bg { flex: 1; height: 12px; border-radius: 6px; background: #eee; overflow: hidden; }
 .week-bar-fill { height: 100%; background: #C99A3E; border-radius: 6px; }
 .week-bar-fill.hit { background: #2F5443; }
@@ -405,12 +405,20 @@ function renderEx(e, dayLabel, isToday, daylog) {
   let swapBlock = '';
   if (isToday) {
     const alts = alternativesFor(e.type, e.n);
+    const customId = id + '_custom';
+    const isKnownAlt = swappedTo && alts.some(a => a.name === swappedTo);
+    const isCustomSwap = swappedTo && !isKnownAlt;
     swapBlock = `<div class="ex-swap-row">
       ${swappedTo?`<div class="ex-swap-note">🔄 no lugar de: ${e.n}</div>`:''}
-      <select class="ex-swap-select" onclick="event.stopPropagation()" onchange='event.stopPropagation(); swapExercise(${JSON.stringify(iso)}, ${JSON.stringify(e.n)}, this.value)'>
+      <select class="ex-swap-select" onclick="event.stopPropagation()" onchange='event.stopPropagation(); handleSwapSelect(this, ${JSON.stringify(iso)}, ${JSON.stringify(e.n)}, ${JSON.stringify(customId)})'>
         <option value="" ${!swappedTo?'selected':''}>🔄 Trocar exercício...</option>
         ${alts.map(a => `<option value="${a.name}" ${swappedTo===a.name?'selected':''}>${a.name}</option>`).join('')}
+        <option value="__custom__" ${isCustomSwap?'selected':''}>✏️ Outro (digitar)...</option>
       </select>
+      <div class="ex-swap-custom-row" id="${customId}" style="display:${isCustomSwap?'flex':'none'};gap:6px;margin-top:6px;">
+        <input type="text" class="ex-swap-select" id="${customId}_input" placeholder="Nome do aparelho que você usou..." value="${isCustomSwap?swappedTo:''}" onclick="event.stopPropagation()" style="flex:1"/>
+        <button class="btn-weight-save" onclick='event.stopPropagation(); saveCustomSwap(${JSON.stringify(customId+"_input")}, ${JSON.stringify(iso)}, ${JSON.stringify(e.n)})'>✓</button>
+      </div>
     </div>`;
   }
   return `<div class="ex-wrap${exClass[e.type]||''}${e.isNew?' new-item':''}${done?' checked-item':''}">
@@ -764,6 +772,19 @@ function startWorkoutTimer(iso, label) {
   renderApp();
 }
 
+/* ===== Duração das sessões ===== */
+function sessionDurations(daylog) {
+  return Object.keys(daylog)
+    .filter(iso => daylog[iso].startedAt && daylog[iso].finishedAt && daylog[iso].finishedAt > daylog[iso].startedAt)
+    .sort()
+    .map(iso => ({date: iso, ms: daylog[iso].finishedAt - daylog[iso].startedAt}));
+}
+function avgSessionDuration(daylog) {
+  const durs = sessionDurations(daylog);
+  if (!durs.length) return null;
+  return durs.reduce((a,b) => a + b.ms, 0) / durs.length;
+}
+
 /* ===== Trocar exercício ===== */
 function swapExercise(iso, originalName, newName) {
   let daylog = loadJSON(SK.daylog, {});
@@ -775,6 +796,19 @@ function swapExercise(iso, originalName, newName) {
 }
 function alternativesFor(type, excludeName) {
   return allUniqueExercises().filter(e => e.type === type && e.name !== excludeName);
+}
+function handleSwapSelect(selectEl, iso, origName, customId) {
+  if (selectEl.value === '__custom__') {
+    const box = document.getElementById(customId);
+    if (box) box.style.display = 'flex';
+  } else {
+    swapExercise(iso, origName, selectEl.value);
+  }
+}
+function saveCustomSwap(inputId, iso, origName) {
+  const el = document.getElementById(inputId);
+  if (!el || !el.value.trim()) return;
+  swapExercise(iso, origName, el.value.trim());
 }
 
 function pointsOf(rec) {
@@ -896,8 +930,10 @@ function renderBackupBox() {
 
 let expandPeso = false;
 let expandMedidas = false;
+let expandRecordes = false;
 function toggleExpandPeso() { expandPeso = !expandPeso; renderApp(); }
 function toggleExpandMedidas() { expandMedidas = !expandMedidas; renderApp(); }
+function toggleExpandRecordes() { expandRecordes = !expandRecordes; renderApp(); }
 
 function renderIMCWeightBox(altura, pesos) {
   const sortedAsc = [...pesos].sort((a,b) => a.date.localeCompare(b.date));
@@ -1011,13 +1047,14 @@ function renderCheckinBox(daylog) {
   </div>`;
 }
 
-function bucketOfDay(dayOfMonth) { return Math.min(Math.ceil(dayOfMonth/7), 5); }
+function bucketOfDay(dayOfMonth, firstDayWeekday) { return Math.floor((dayOfMonth - 1 + firstDayWeekday) / 7); }
 function renderDesafiosBox(daylog) {
   const now = new Date();
   const y = now.getFullYear(), m = now.getMonth();
   const monthLabel = capitalize(now.toLocaleDateString('pt-BR', {month:'long', year:'numeric'}));
   const daysInMonth = new Date(y, m+1, 0).getDate();
-  const numBuckets = Math.ceil(daysInMonth/7);
+  const firstDayWeekday = new Date(y, m, 1).getDay(); // 0 = Domingo
+  const numBuckets = bucketOfDay(daysInMonth, firstDayWeekday) + 1;
   let weekly = Array(numBuckets).fill(0);
   let monthTotal = 0;
   Object.keys(daylog).forEach(iso => {
@@ -1025,19 +1062,24 @@ function renderDesafiosBox(daylog) {
     if (yy === y && (mm-1) === m) {
       const pts = pointsOf(daylog[iso]);
       monthTotal += pts;
-      weekly[bucketOfDay(dd)-1] += pts;
+      weekly[bucketOfDay(dd, firstDayWeekday)] += pts;
     }
   });
+  const weekRangeLabel = (i) => {
+    const startDay = Math.max(1, i*7 - firstDayWeekday + 1);
+    const endDay = Math.min(daysInMonth, (i+1)*7 - firstDayWeekday);
+    return `${startDay}–${endDay}`;
+  };
   const weeklyGoal = 50000, monthGoal = 150000;
   const monthPct = Math.round(monthTotal/monthGoal*100);
   return `<div class="card">
     <div class="card-title">🎯 Desafios do Mês</div>
-    <p class="card-sub">${monthLabel}</p>
+    <p class="card-sub">${monthLabel} · semanas de domingo a sábado</p>
     ${weekly.map((v,i) => {
       const pct = Math.round(v/weeklyGoal*100);
       const hit = v >= weeklyGoal;
       return `<div class="week-challenge-row">
-        <span class="week-label">Sem ${i+1}</span>
+        <span class="week-label">Sem ${i+1}<br><span style="font-size:9px;color:#aaa;font-weight:400">${weekRangeLabel(i)}</span></span>
         <div class="week-bar-bg"><div class="week-bar-fill${hit?' hit':''}" style="width:${Math.min(pct,100)}%"></div></div>
         <span class="week-vals">${hit?'✓ ':''}${Math.round(v/1000)}k/50k · ${pct}%</span>
       </div>`;
@@ -1110,11 +1152,13 @@ function renderRecordesBox(daylog) {
   if (records.length === 0) {
     return `<div class="card"><div class="card-title">🏆 Recordes Pessoais</div><p class="card-sub">Registre carga nos exercícios do check-in pra começar a ver seus PRs aqui.</p></div>`;
   }
+  const visible = expandRecordes ? records : records.slice(0,4);
   return `<div class="card">
     <div class="card-title">🏆 Recordes Pessoais</div>
     <div class="history-list">
-      ${records.map(r => `<div class="history-item"><div class="history-item-top"><span>${r.name}</span><span style="font-weight:700;color:#8A6A22">${r.pr}kg</span></div></div>`).join('')}
+      ${visible.map(r => `<div class="history-item"><div class="history-item-top"><span>${r.name}</span><span style="font-weight:700;color:#8A6A22">${r.pr}kg</span></div></div>`).join('')}
     </div>
+    ${records.length > 4 ? `<button class="history-toggle" onclick="toggleExpandRecordes()">${expandRecordes ? '▲ Recolher' : `▼ Ver tudo (${records.length})`}</button>` : ''}
   </div>`;
 }
 
@@ -1195,6 +1239,26 @@ function renderEvolucaoResumo(pesos, daylog) {
     </div>
   </div>`;
 }
+function renderDuracaoBox(daylog) {
+  const durs = sessionDurations(daylog);
+  if (!durs.length) {
+    return `<div class="card"><div class="card-title">⏱ Tempo de Treino</div><p class="card-sub">Use o cronômetro (▶ Iniciar treino) na aba Treino pra começar a ver sua duração média aqui.</p></div>`;
+  }
+  const avg = avgSessionDuration(daylog);
+  const points = durs.slice(-8).map(d => ({label: fmtDateBR(d.date).slice(0,5), value: d.ms/60000}));
+  return `<div class="card">
+    <div class="card-title">⏱ Tempo de Treino</div>
+    <div class="home-stat" style="text-align:left;padding:12px 14px;margin-top:8px">
+      <div class="ex-lbl" style="text-transform:uppercase">Duração média por sessão</div>
+      <div style="font-size:20px;font-weight:700;font-family:'Space Grotesk',sans-serif">${fmtDuration(avg)}</div>
+      <div class="hint" style="margin-top:2px">${durs.length} sessão${durs.length===1?'':'ões'} cronometrada${durs.length===1?'':'s'}</div>
+    </div>
+    <div class="sub-box" style="margin-top:12px">
+      <div class="sub-box-title">Duração por sessão (min)</div>
+      ${svgLineChart(points, '#185FA5')}
+    </div>
+  </div>`;
+}
 function renderEvolucao() {
   const altura = loadJSON(SK.altura, null);
   const pesos = loadJSON(SK.pesos, []);
@@ -1202,6 +1266,7 @@ function renderEvolucao() {
   const daylog = loadJSON(SK.daylog, {});
   document.getElementById('content').innerHTML =
     renderEvolucaoResumo(pesos, daylog) +
+    renderDuracaoBox(daylog) +
     renderIMCWeightBox(altura, pesos) +
     renderMedidasBox(medidas);
 }
@@ -1266,6 +1331,7 @@ function homeHTML() {
   const { streak, furoAvailable } = computeStreak(daylog);
   const totalTreinos = totalTreinosRealizados(daylog);
   const avgCarga = avgCargaGeral(daylog);
+  const avgDur = avgSessionDuration(daylog);
   const now = new Date();
   const dateLabel = capitalize(now.toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long', year:'numeric'}));
 
@@ -1300,6 +1366,7 @@ function homeHTML() {
       <div class="home-stat"><div class="home-stat-icon">🔥</div><div class="home-stat-val">${streak} dia${streak===1?'':'s'}</div></div>
       <div class="home-stat"><div class="home-stat-icon">🏋️</div><div class="home-stat-val">${totalTreinos} treinos</div></div>
       <div class="home-stat"><div class="home-stat-icon">📈</div><div class="home-stat-val">${avgCarga?avgCarga.toFixed(1)+'kg':'—'}</div><div class="home-stat-sub">carga média</div></div>
+      <div class="home-stat"><div class="home-stat-icon">⏱</div><div class="home-stat-val">${avgDur?fmtDuration(avgDur):'—'}</div><div class="home-stat-sub">tempo médio</div></div>
     </div>
     <p class="home-furo-note">${furoAvailable ? '🟢 furo disponível essa semana' : '🔴 furo já usado essa semana'}</p>
     ${ctaHTML}
@@ -1311,7 +1378,7 @@ function homeHTML() {
     <div class="quick-row">
       <button class="quick-pill" onclick="goTo('evolucao')">Atualizar medidas</button>
       <button class="quick-pill" onclick="goTo('evolucao')">Registrar peso</button>
-      <button class="quick-pill" onclick="setDay('livre'); goTo('treino')">Alongar</button>
+      <button class="quick-pill" onclick="goTo('treino'); setDay('livre')">Alongar</button>
     </div>
     ${renderAchievements(daylog, streak, totalTreinos)}
   </div>${bottomNavHTML()}`;
@@ -1405,7 +1472,15 @@ function renderTreinoLivre() {
     </div>`;
 }
 
-function goTo(v) { view = v; renderApp(); }
+function goTo(v) {
+  if (v === 'treino') {
+    const label = weekdayLabelFromISO(todayISO());
+    const idx = days.findIndex(d => d.label === label);
+    if (idx >= 0) active = idx;
+  }
+  view = v;
+  renderApp();
+}
 function goHome() { view = 'home'; renderApp(); }
 function renderApp() {
   if (timerIntervalId) { clearInterval(timerIntervalId); timerIntervalId = null; }
