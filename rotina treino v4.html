@@ -209,13 +209,13 @@ const WEEKLY_OVERVIEW_HTML = `
   <div class="weekly-overview">
     <div class="weekly-title">Visão da semana</div>
     <div class="week-row">
-      <div class="week-day"><div class="week-day-name">Seg</div><div class="week-day-dot" style="background:#f0f0ec">😴</div><div class="week-day-label">Descanso</div></div>
+      <div class="week-day"><div class="week-day-name">Seg</div><div class="week-day-dot" style="background:#E1F5EE">🔙</div><div class="week-day-label">Costas + Bic</div></div>
       <div class="week-day"><div class="week-day-name">Ter</div><div class="week-day-dot" style="background:#F0DAE0">🦵</div><div class="week-day-label">Pernas + Core</div></div>
       <div class="week-day"><div class="week-day-name">Qua</div><div class="week-day-dot" style="background:#DCE8DE">💪</div><div class="week-day-label">Peito + Tri + Core</div></div>
-      <div class="week-day"><div class="week-day-name">Qui</div><div class="week-day-dot" style="background:#f0f0ec">😴</div><div class="week-day-label">Descanso</div></div>
+      <div class="week-day"><div class="week-day-name">Qui</div><div class="week-day-dot" style="background:#F3E6C8">🍑</div><div class="week-day-label">Full Body + Glúteo</div></div>
       <div class="week-day"><div class="week-day-name">Sex</div><div class="week-day-dot" style="background:#E6F1FB">🏋️</div><div class="week-day-label">Ombros + Tri ⚽</div></div>
-      <div class="week-day"><div class="week-day-name">Sáb</div><div class="week-day-dot" style="background:#E1F5EE">🔙</div><div class="week-day-label">Costas + Bic</div></div>
-      <div class="week-day"><div class="week-day-name">Dom</div><div class="week-day-dot" style="background:#F3E6C8">🍑</div><div class="week-day-label">Full Body + Glúteo</div></div>
+      <div class="week-day"><div class="week-day-name">Sáb</div><div class="week-day-dot" style="background:#f0f0ec">😴</div><div class="week-day-label">Descanso</div></div>
+      <div class="week-day"><div class="week-day-name">Dom</div><div class="week-day-dot" style="background:#f0f0ec">😴</div><div class="week-day-label">Descanso</div></div>
     </div>
   </div>`;
 const STATS_HTML = `
@@ -227,7 +227,27 @@ const STATS_HTML = `
   </div>`;
 
 const days = [
-  { label: 'Seg', rest: true },
+  { label: 'Seg', title: 'Costas + Bíceps', badge: 'bl', bl: 'Pull', time: '~50min',
+    sections: [
+      { title: '🔙 Costas', exs: [
+        { n: 'Remada na máquina (assento)', o: 'Agora em 1º — foco espessura, bloco de força', s: '4x', r: '8–10', type: 'maq',
+          howto: ['Peito apoiado no encosto, pegue as alças', 'Puxe em direção ao abdômen, cotovelos junto ao corpo', 'Volte controlado sem tirar o peito do apoio'] },
+        { n: 'Puxada na máquina (pegada larga)', o: 'Secundário agora — mesma base, menos volume', s: '3x', r: '10–12', type: 'maq',
+          howto: ['Pegada larga na barra, tronco levemente inclinado atrás', 'Puxe com as costas, cotovelos indo pra baixo e pra trás', 'Suba controlado, sem deixar o peso bater'] },
+        { n: 'Puxada pegada neutra (triângulo)', o: 'Variação — mais bíceps envolvido', s: '3x', r: '12', type: 'maq',
+          howto: ['Pegue a barra triângulo com as palmas se olhando', 'Puxe até a barra chegar perto do peito', 'Volte controlado, braços quase estendidos no topo'] },
+      ]},
+      { title: '💪 Bíceps — 1º estímulo', exs: [
+        { n: 'Rosca na Scott machine', o: 'Sem balanço — bloco de força agora — 1º estímulo semanal', s: '3x', r: '8–10', type: 'maq',
+          howto: ['Braço apoiado no encosto inclinado, cotovelo fixo', 'Flexione até contrair bem o bíceps, sem tirar o cotovelo do apoio', 'Desça controlado até quase estender'] },
+        { n: 'Rosca martelo no cabo', o: 'Braquial — volume na parte externa do braço', s: '3x', r: '12', type: 'maq',
+          howto: ['Pegada neutra (martelo), cotovelos junto ao corpo', 'Flexione sem girar o punho', 'Desça controlado'] },
+        { n: 'Rosca concentrada com halter', o: 'Isolamento máximo — pico do bíceps', s: '3x', r: '10–12', type: 'maq',
+          howto: ['Sentado, cotovelo apoiado na parte interna da coxa', 'Flexione contraindo bem no topo', 'Desça bem controlado, sem balançar'] },
+      ]},
+    ],
+    tips: ['Remada assumiu o 1º lugar — varia o estímulo de 3 meses na puxada larga', 'Controle a descida nas roscas — fase excêntrica é ouro', 'Rosca concentrada: cotovelo no joelho, sem balanço']
+  },
   { label: 'Ter', title: 'Pernas + Core', badge: 'bg', bl: 'Legs', time: '~50min',
     sections: [
       { title: '🦵 Pernas', exs: [
@@ -284,7 +304,39 @@ const days = [
     ],
     tips: ['Supino inclinado assumiu o posto de principal — varia o estímulo de 3 meses no chest press', 'Crossover: braços levemente dobrados, fecha o peito', 'Cadeira abdutora aqui é rápida (~3-4min) — não é pra fadigar, só somar frequência', 'Core no final — não pula!']
   },
-  { label: 'Qui', rest: true },
+  { label: 'Qui', title: 'Full Body + Glúteo', badge: 'bfull', bl: 'Full Body', time: '~75min', long: true,
+    sections: [
+      { title: '🍑 Glúteo — prioridade', exs: [
+        { n: 'Elevação pélvica (hip thrust) na máquina', o: 'Melhor exercício para glúteo — carga progressiva, reps mais baixas', s: '4x', r: '10–12', type: 'glute',
+          howto: ['Costas apoiadas no banco, barra/almofada na altura do quadril', 'Empurre o quadril pra cima até o corpo ficar reto', 'Pausa 1-2s contraindo o glúteo no topo, desça controlado'] },
+        { n: 'Cadeira abdutora com tronco inclinado', o: 'Inclinar pra frente ativa mais glúteo médio', s: '4x', r: '15', type: 'glute',
+          howto: ['Sente e incline o tronco levemente pra frente', 'Empurre as pernas pra fora, controlado', 'Segure 1s no ponto máximo'] },
+        { n: 'Leg press com pés altos e afastados', o: 'Mais um set — volume extra pro glúteo', s: '4x', r: '12', type: 'glute',
+          howto: ['Pés mais altos e mais afastados na plataforma que o normal', 'Desça controlado até ~90° de joelho', 'Empurre pelo calcanhar, sentindo mais o glúteo que o quadríceps'] },
+      ]},
+      { title: '💪 Bíceps — 2º estímulo', exs: [
+        { n: 'Rosca direta no cabo (barra reta)', o: 'Amplitude completa — 2º estímulo semanal', s: '3x', r: '10–12', type: 'maq',
+          howto: ['Pegada pronada na barra reta do cabo', 'Flexione até contrair bem, cotovelos fixos', 'Desça até quase estender totalmente'] },
+        { n: 'Rosca 21 no cabo', o: '7 parcial baixo + 7 parcial alto + 7 completas', s: '2x', r: '21', type: 'maq',
+          howto: ['7 reps na metade inferior do movimento', '7 reps na metade superior', '7 reps completas pra fechar — usa carga mais leve que o normal'] },
+      ]},
+      { title: '🏋️ Complemento', exs: [
+        { n: 'Remada na máquina (costas)', o: 'Manter volume de costas', s: '3x', r: '12', type: 'maq',
+          howto: ['Mesma execução de segunda: peito apoiado, puxe até o abdômen', 'Cotovelos junto ao corpo', 'Volte controlado'] },
+        { n: 'Desenvolvimento na máquina (ombros)', o: 'Volume extra de ombros', s: '3x', r: '12', type: 'maq',
+          howto: ['Mesma execução de sexta: alças na altura do ombro', 'Empurre pra cima sem travar', 'Desça controlado'] },
+      ]},
+      { title: '🔥 Core', exs: [
+        { n: 'Crunch no cabo (ajoelhado)', o: 'Polia alta, corda na nuca', s: '3x', r: '15', type: 'core',
+          howto: ['Ajoelhado de costas pra polia, corda na nuca', 'Flexione com o abdômen', 'Volte controlado'] },
+        { n: 'Elevação de pernas deitado', o: 'Lombar colada no chão — só sobe as pernas', s: '3x', r: '12–15', type: 'core',
+          howto: ['Deitado, lombar sempre colada no chão', 'Suba as pernas estendidas ou semi-flexionadas', 'Desça controlado sem deixar a lombar arquear'] },
+        { n: 'Prancha frontal', o: 'Segurar 45–60s — fechar o treino', s: '3x', r: '50s', type: 'core',
+          howto: ['Cotovelos sob os ombros, corpo reto', 'Contraia abdômen e glúteo', 'Respire normal'] },
+      ]},
+    ],
+    tips: ['Hip thrust: empurra o quadril pra cima, não arqueia a lombar', 'Leg press pés altos ganhou 1 série extra — glúteo é prioridade', 'Rosca 21 é pesada — usa menos carga do que parece']
+  },
   { label: 'Sex', title: 'Ombros + Tríceps', badge: 'bs', bl: 'Ombros', time: '~50min',
     alert: '⚽ Futebol às 20h — mas academia é às 5h30, então 14h de intervalo. Sem problema!',
     sections: [
@@ -307,60 +359,8 @@ const days = [
     ],
     tips: ['2º estímulo de tríceps na semana = crescimento acelerado', 'Peck deck invertido subiu de volume — postura e equilíbrio de ombro', 'Alonga o tendão de Aquiles antes do futebol à noite']
   },
-  { label: 'Sáb', title: 'Costas + Bíceps', badge: 'bl', bl: 'Pull', time: '~50min',
-    sections: [
-      { title: '🔙 Costas', exs: [
-        { n: 'Remada na máquina (assento)', o: 'Agora em 1º — foco espessura, bloco de força', s: '4x', r: '8–10', type: 'maq',
-          howto: ['Peito apoiado no encosto, pegue as alças', 'Puxe em direção ao abdômen, cotovelos junto ao corpo', 'Volte controlado sem tirar o peito do apoio'] },
-        { n: 'Puxada na máquina (pegada larga)', o: 'Secundário agora — mesma base, menos volume', s: '3x', r: '10–12', type: 'maq',
-          howto: ['Pegada larga na barra, tronco levemente inclinado atrás', 'Puxe com as costas, cotovelos indo pra baixo e pra trás', 'Suba controlado, sem deixar o peso bater'] },
-        { n: 'Puxada pegada neutra (triângulo)', o: 'Variação — mais bíceps envolvido', s: '3x', r: '12', type: 'maq',
-          howto: ['Pegue a barra triângulo com as palmas se olhando', 'Puxe até a barra chegar perto do peito', 'Volte controlado, braços quase estendidos no topo'] },
-      ]},
-      { title: '💪 Bíceps — 1º estímulo', exs: [
-        { n: 'Rosca na Scott machine', o: 'Sem balanço — bloco de força agora — 1º estímulo semanal', s: '3x', r: '8–10', type: 'maq',
-          howto: ['Braço apoiado no encosto inclinado, cotovelo fixo', 'Flexione até contrair bem o bíceps, sem tirar o cotovelo do apoio', 'Desça controlado até quase estender'] },
-        { n: 'Rosca martelo no cabo', o: 'Braquial — volume na parte externa do braço', s: '3x', r: '12', type: 'maq',
-          howto: ['Pegada neutra (martelo), cotovelos junto ao corpo', 'Flexione sem girar o punho', 'Desça controlado'] },
-        { n: 'Rosca concentrada com halter', o: 'Isolamento máximo — pico do bíceps', s: '3x', r: '10–12', type: 'maq',
-          howto: ['Sentado, cotovelo apoiado na parte interna da coxa', 'Flexione contraindo bem no topo', 'Desça bem controlado, sem balançar'] },
-      ]},
-    ],
-    tips: ['Remada assumiu o 1º lugar — varia o estímulo de 3 meses na puxada larga', 'Controle a descida nas roscas — fase excêntrica é ouro', 'Rosca concentrada: cotovelo no joelho, sem balanço']
-  },
-  { label: 'Dom', title: 'Full Body + Glúteo', badge: 'bfull', bl: 'Full Body', time: '~75min', long: true,
-    sections: [
-      { title: '🍑 Glúteo — prioridade', exs: [
-        { n: 'Elevação pélvica (hip thrust) na máquina', o: 'Melhor exercício para glúteo — carga progressiva, reps mais baixas', s: '4x', r: '10–12', type: 'glute',
-          howto: ['Costas apoiadas no banco, barra/almofada na altura do quadril', 'Empurre o quadril pra cima até o corpo ficar reto', 'Pausa 1-2s contraindo o glúteo no topo, desça controlado'] },
-        { n: 'Cadeira abdutora com tronco inclinado', o: 'Inclinar pra frente ativa mais glúteo médio', s: '4x', r: '15', type: 'glute',
-          howto: ['Sente e incline o tronco levemente pra frente', 'Empurre as pernas pra fora, controlado', 'Segure 1s no ponto máximo'] },
-        { n: 'Leg press com pés altos e afastados', o: 'Mais um set — volume extra pro glúteo', s: '4x', r: '12', type: 'glute',
-          howto: ['Pés mais altos e mais afastados na plataforma que o normal', 'Desça controlado até ~90° de joelho', 'Empurre pelo calcanhar, sentindo mais o glúteo que o quadríceps'] },
-      ]},
-      { title: '💪 Bíceps — 2º estímulo', exs: [
-        { n: 'Rosca direta no cabo (barra reta)', o: 'Amplitude completa — 2º estímulo semanal', s: '3x', r: '10–12', type: 'maq',
-          howto: ['Pegada pronada na barra reta do cabo', 'Flexione até contrair bem, cotovelos fixos', 'Desça até quase estender totalmente'] },
-        { n: 'Rosca 21 no cabo', o: '7 parcial baixo + 7 parcial alto + 7 completas', s: '2x', r: '21', type: 'maq',
-          howto: ['7 reps na metade inferior do movimento', '7 reps na metade superior', '7 reps completas pra fechar — usa carga mais leve que o normal'] },
-      ]},
-      { title: '🏋️ Complemento', exs: [
-        { n: 'Remada na máquina (costas)', o: 'Manter volume de costas', s: '3x', r: '12', type: 'maq',
-          howto: ['Mesma execução de sábado: peito apoiado, puxe até o abdômen', 'Cotovelos junto ao corpo', 'Volte controlado'] },
-        { n: 'Desenvolvimento na máquina (ombros)', o: 'Volume extra de ombros', s: '3x', r: '12', type: 'maq',
-          howto: ['Mesma execução de sexta: alças na altura do ombro', 'Empurre pra cima sem travar', 'Desça controlado'] },
-      ]},
-      { title: '🔥 Core', exs: [
-        { n: 'Crunch no cabo (ajoelhado)', o: 'Polia alta, corda na nuca', s: '3x', r: '15', type: 'core',
-          howto: ['Ajoelhado de costas pra polia, corda na nuca', 'Flexione com o abdômen', 'Volte controlado'] },
-        { n: 'Elevação de pernas deitado', o: 'Lombar colada no chão — só sobe as pernas', s: '3x', r: '12–15', type: 'core',
-          howto: ['Deitado, lombar sempre colada no chão', 'Suba as pernas estendidas ou semi-flexionadas', 'Desça controlado sem deixar a lombar arquear'] },
-        { n: 'Prancha frontal', o: 'Segurar 45–60s — fechar o treino', s: '3x', r: '50s', type: 'core',
-          howto: ['Cotovelos sob os ombros, corpo reto', 'Contraia abdômen e glúteo', 'Respire normal'] },
-      ]},
-    ],
-    tips: ['Hip thrust: empurra o quadril pra cima, não arqueia a lombar', 'Leg press pés altos ganhou 1 série extra — glúteo é prioridade', 'Rosca 21 é pesada — usa menos carga do que parece']
-  },
+  { label: 'Sáb', rest: true },
+  { label: 'Dom', rest: true },
 ];
 
 const chipClass = { maq: '', glute: ' glute-chip', core: ' core-chip' };
@@ -561,8 +561,13 @@ function flattenExercises(dayDef) {
 }
 
 /* ===== Streak com furo semanal ===== */
-const TRAINING_LABELS = ['Ter','Qua','Sex','Sáb','Dom'];
-function isTrainingLabel(label) { return TRAINING_LABELS.includes(label); }
+const TRAINING_LABELS_OLD = ['Ter','Qua','Sex','Sáb','Dom']; // até 25/10/2026
+const TRAINING_LABELS = ['Seg','Ter','Qua','Qui','Sex'];      // a partir de 26/10/2026
+const SCHEDULE_CUTOVER = '2026-10-26';
+function isTrainingDay(iso) {
+  const label = weekdayLabelFromISO(iso);
+  return (iso < SCHEDULE_CUTOVER ? TRAINING_LABELS_OLD : TRAINING_LABELS).includes(label);
+}
 function mondayOfWeek(dateObj) {
   const d = new Date(dateObj);
   const day = d.getDay();
@@ -587,7 +592,7 @@ function computeStreak(daylog) {
   while (cursor < todayDate) {
     const iso = cursor.getFullYear() + '-' + String(cursor.getMonth()+1).padStart(2,'0') + '-' + String(cursor.getDate()).padStart(2,'0');
     const label = weekdayLabelFromISO(iso);
-    if (isTrainingLabel(label)) {
+    if (isTrainingDay(iso)) {
       const wk = weekKey(cursor);
       if (furoUsedThisWeek[wk] === undefined) furoUsedThisWeek[wk] = false;
       const rec = daylog[iso];
@@ -604,7 +609,7 @@ function computeStreak(daylog) {
   const todayLabel = weekdayLabelFromISO(todayStr);
   const wkToday = weekKey(todayDate);
   let furoAvailable = !furoUsedThisWeek[wkToday];
-  if (isTrainingLabel(todayLabel)) {
+  if (isTrainingDay(todayStr)) {
     const recToday = daylog[todayStr];
     if (recToday && recToday.dayCheckedIn) streak += 1;
   }
